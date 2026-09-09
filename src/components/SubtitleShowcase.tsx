@@ -48,7 +48,7 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
   return (
     <section id="subtitles" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={showcaseRef}>
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/30 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
           <span>{dict.showcase.badge}</span>
         </div>
@@ -115,7 +115,7 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Screenshot Display */}
-          <div className="lg:col-span-8 relative rounded-2xl overflow-hidden border border-white/20 bg-black/20 shadow-inner group">
+          <div className="lg:col-span-8 relative rounded-2xl overflow-hidden border border-white/25 bg-white/5 shadow-inner group">
             <img
               src={activeDemoObj.src}
               alt={activeDemoObj.alt}

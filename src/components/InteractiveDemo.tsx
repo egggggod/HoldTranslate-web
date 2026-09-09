@@ -95,7 +95,7 @@ export default function InteractiveDemo({
     <section id="demo" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={demoContainerRef}>
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/30 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5 text-blue-300" />
           <span>{dict.demo.badge}</span>
         </div>
@@ -133,7 +133,7 @@ export default function InteractiveDemo({
                   <span className="w-3 h-3 rounded-full bg-emerald-500/90 shadow-xs" />
                 </div>
 
-                <div className="flex-1 max-w-xs sm:max-w-sm mx-4 px-3 py-1 rounded-full bg-black/20 border border-white/15 text-xs font-mono text-white/80 text-center truncate">
+                <div className="flex-1 max-w-xs sm:max-w-sm mx-4 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-mono text-white/90 text-center truncate">
                   {activeTab === "tech" && "https://tech-times.org/ai-fluid-interfaces"}
                   {activeTab === "video" && "https://www.youtube.com/watch?v=ht-timedtext"}
                   {activeTab === "paper" && "https://arxiv.org/abs/2609.12345v1"}
@@ -156,7 +156,7 @@ export default function InteractiveDemo({
               </div>
 
               {/* Tabs as LiquidGlass Buttons */}
-              <div className="flex items-center gap-2 p-3 border-b border-white/10 bg-black/10">
+              <div className="flex items-center gap-2 p-3 border-b border-white/10 bg-white/5">
                 <LiquidGlass
                   mode={settings.mode}
                   displacementScale={35}
@@ -534,7 +534,7 @@ export default function InteractiveDemo({
                 <label className="text-xs font-bold text-white block mb-2">
                   {dict.demo.themeLabel}
                 </label>
-                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-black/25 border border-white/20">
+                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/10 border border-white/20">
                   {PALETTE.map((c) => {
                     const isSelected = accentColor.toLowerCase() === c.hex.toLowerCase()
                     return (

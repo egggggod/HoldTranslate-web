@@ -68,7 +68,7 @@ export default function FeatureGrid({ dict, accentColor, settings }: FeatureGrid
   return (
     <section id="features" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={gridContainerRef}>
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/30 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5 text-purple-300" />
           <span>{dict.features.badge}</span>
         </div>
@@ -111,7 +111,7 @@ export default function FeatureGrid({ dict, accentColor, settings }: FeatureGrid
                     >
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/20 text-white/80 border border-white/10">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 text-white/90 border border-white/20">
                       {f.tag}
                     </span>
                   </div>

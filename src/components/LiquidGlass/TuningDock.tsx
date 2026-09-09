@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS: TuningSettings = {
   aberrationIntensity: 2.5,
   elasticity: 0.25,
   cornerRadius: 24,
-  overLight: true,
+  overLight: false,
   wallpaperIndex: 0,
 }
 

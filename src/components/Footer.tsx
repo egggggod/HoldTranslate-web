@@ -18,7 +18,7 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
   const footerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <footer ref={footerRef} className="relative mt-20 border-t border-white/10 bg-black/25 backdrop-blur-2xl py-14 px-4 text-white/80 text-sm select-none">
+    <footer ref={footerRef} className="relative mt-20 border-t border-white/15 bg-white/5 backdrop-blur-2xl py-14 px-4 text-white/85 text-sm select-none">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
         {/* Brand & Slogan */}
         <div className="flex flex-col items-center md:items-start gap-2">

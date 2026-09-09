@@ -268,37 +268,12 @@ const GlassContainer = forwardRef<
             padding,
             overflow: "hidden",
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-            backgroundColor: overLight
-              ? isHovered
-                ? "rgba(255, 255, 255, 0.08)"
-                : "rgba(255, 255, 255, 0.04)"
-              : isHovered
-              ? "rgba(15, 23, 42, 0.25)"
-              : "rgba(15, 23, 42, 0.12)",
-            boxShadow: overLight
-              ? isHovered
-                ? "0 25px 70px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(0, 0, 0, 0.2)"
-                : "0 18px 50px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.35) inset, 0 1px 2px rgba(0, 0, 0, 0.15)"
-              : isHovered
-              ? "0 25px 70px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.25) inset"
-              : "0 18px 50px -10px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15) inset",
+            backgroundColor: isHovered ? "rgba(255, 255, 255, 0.03)" : "transparent",
+            boxShadow: isHovered
+              ? "0 16px 44px -8px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.45) inset"
+              : "0 10px 30px -6px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.3) inset",
           }}
         >
-          {/* Over light layer 1 - subtle darkening matching liquid-glass-react */}
-          <div
-            className={`pointer-events-none absolute inset-0 bg-black transition-all duration-150 ease-in-out ${
-              overLight ? "opacity-20" : "opacity-0"
-            }`}
-            style={{ borderRadius: `${cornerRadius}px` }}
-          />
-          {/* Over light layer 2 - mix-blend-overlay contrast punch matching liquid-glass-react */}
-          <div
-            className={`pointer-events-none absolute inset-0 bg-black mix-blend-overlay transition-all duration-150 ease-in-out ${
-              overLight ? "opacity-100" : "opacity-0"
-            }`}
-            style={{ borderRadius: `${cornerRadius}px` }}
-          />
-
           {/* backdrop refraction layer */}
           <span
             className="glass__warp pointer-events-none"

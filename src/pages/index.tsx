@@ -79,10 +79,8 @@ export default function Home() {
           />
           {/* Subtle contrast overlay for optimal optical glass refraction */}
           <div
-            className={`absolute inset-0 transition-opacity duration-500 ${
-              settings.overLight
-                ? "bg-black/20"
-                : "bg-slate-950/60 backdrop-blur-xs"
+            className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
+              settings.overLight ? "bg-black/15" : "bg-transparent"
             }`}
           />
           {/* Gentle Aurora Glow Balls behind the glass */}

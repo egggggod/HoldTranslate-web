@@ -86,7 +86,7 @@ export default function QuickInstall({ dict, accentColor, settings }: QuickInsta
   return (
     <section id="install" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={installRef}>
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/30 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
           <span>{dict.install.badge}</span>
         </div>
