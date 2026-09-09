@@ -62,7 +62,7 @@ export default function Home() {
       </Head>
 
       <div
-        className="min-h-screen text-slate-900 selection:bg-blue-600 selection:text-white relative overflow-hidden transition-colors duration-500"
+        className="min-h-screen text-white selection:bg-blue-600 selection:text-white relative overflow-hidden transition-colors duration-500"
         style={
           {
             "--accent-color": accentColor,
@@ -75,13 +75,13 @@ export default function Home() {
           <img
             src={activeWallpaper}
             alt="Scenic Background"
-            className="w-full h-full object-cover object-center transition-all duration-700 scale-105 filter brightness-[1.03] contrast-[1.02]"
+            className="w-full h-full object-cover object-center transition-all duration-700 scale-105 filter brightness-[1.03] contrast-[1.04]"
           />
-          {/* Subtle light ambient overlay for optimal readability */}
+          {/* Subtle contrast overlay for optimal optical glass refraction */}
           <div
             className={`absolute inset-0 transition-opacity duration-500 ${
               settings.overLight
-                ? "bg-gradient-to-b from-white/40 via-white/20 to-white/50"
+                ? "bg-black/20"
                 : "bg-slate-950/60 backdrop-blur-xs"
             }`}
           />

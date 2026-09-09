@@ -48,14 +48,14 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
   return (
     <section id="subtitles" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={showcaseRef}>
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/60 border border-white/80 shadow-sm text-xs font-semibold text-slate-800 mb-4 backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+          <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
           <span>{dict.showcase.badge}</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-md">
           {dict.showcase.title}
         </h2>
-        <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium">
+        <p className="text-white/85 text-base sm:text-lg leading-relaxed font-medium drop-shadow-xs">
           {dict.showcase.desc}
         </p>
       </div>
@@ -75,18 +75,23 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
               aberrationIntensity={settings.aberrationIntensity}
               elasticity={0.3}
               cornerRadius={999}
-              overLight={isCurrent ? false : settings.overLight}
+              overLight={settings.overLight}
               padding="10px 20px"
-              style={isCurrent ? { backgroundColor: accentColor } : {}}
               onClick={() => setSelectedDemo(d.id as any)}
               mouseContainer={showcaseRef}
             >
               <div
                 className={`flex items-center gap-2 text-xs sm:text-sm font-bold ${
-                  isCurrent ? "text-white" : "text-slate-800"
+                  isCurrent ? "text-white" : "text-white/75"
                 }`}
               >
-                <Icon className="w-4 h-4" />
+                {isCurrent && (
+                  <span
+                    className="w-2 h-2 rounded-full animate-pulse shadow-sm"
+                    style={{ backgroundColor: accentColor }}
+                  />
+                )}
+                <Icon className={`w-4 h-4 ${isCurrent ? "text-blue-300" : ""}`} />
                 <span>{d.title.split(" ")[1] || d.title}</span>
               </div>
             </LiquidGlass>
@@ -110,7 +115,7 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Screenshot Display */}
-          <div className="lg:col-span-8 relative rounded-2xl overflow-hidden border border-black/10 bg-black/5 shadow-inner group">
+          <div className="lg:col-span-8 relative rounded-2xl overflow-hidden border border-white/20 bg-black/20 shadow-inner group">
             <img
               src={activeDemoObj.src}
               alt={activeDemoObj.alt}
@@ -125,34 +130,34 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
           <div className="lg:col-span-4 flex flex-col gap-6 text-left">
             <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md border border-white/60"
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md border border-white/40"
                 style={{
-                  backgroundColor: `${accentColor}20`,
+                  backgroundColor: `${accentColor}25`,
                   color: accentColor,
                 }}
               >
-                <activeDemoObj.icon className="w-5 h-5" />
+                <activeDemoObj.icon className="w-5 h-5 text-blue-300" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl font-bold text-white tracking-tight">
                 {activeDemoObj.title}
               </h3>
             </div>
 
-            <p className="text-slate-700 text-sm sm:text-base leading-relaxed font-medium">
+            <p className="text-white/85 text-sm sm:text-base leading-relaxed font-medium">
               {activeDemoObj.desc}
             </p>
 
-            <div className="space-y-3 pt-4 border-t border-black/10 text-xs sm:text-sm text-slate-800 font-semibold">
+            <div className="space-y-3 pt-4 border-t border-white/10 text-xs sm:text-sm text-white/90 font-semibold">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Zero visual clutter or bulky card obstruction</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>100% computed font attribute preservation</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>Smooth collapse & restoration on secondary hold</span>
               </div>
             </div>

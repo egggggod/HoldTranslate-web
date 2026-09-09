@@ -18,7 +18,7 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
   const footerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <footer ref={footerRef} className="relative mt-20 border-t border-black/10 bg-white/40 backdrop-blur-2xl py-14 px-4 text-slate-700 text-sm select-none">
+    <footer ref={footerRef} className="relative mt-20 border-t border-white/10 bg-black/25 backdrop-blur-2xl py-14 px-4 text-white/80 text-sm select-none">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
         {/* Brand & Slogan */}
         <div className="flex flex-col items-center md:items-start gap-2">
@@ -31,13 +31,13 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
                 (e.target as HTMLElement).style.display = "none"
               }}
             />
-            <span className="text-lg font-extrabold text-slate-900 tracking-tight">HoldTranslate</span>
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-black/5 text-slate-700">
+            <span className="text-lg font-extrabold text-white tracking-tight">HoldTranslate</span>
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/80 border border-white/15">
               v1.7.0
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-sm">{dict.footer.slogan}</p>
-          <p className="text-[11px] text-slate-500">{dict.footer.releaseNotice}</p>
+          <p className="text-xs sm:text-sm text-white/70 font-medium max-w-sm">{dict.footer.slogan}</p>
+          <p className="text-[11px] text-white/50">{dict.footer.releaseNotice}</p>
         </div>
 
         {/* Links as LiquidGlass Buttons */}
@@ -56,8 +56,8 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
               window.open("https://github.com/egggggod/HoldTranslate-web", "_blank")
             }}
           >
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <Github className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+              <Github className="w-3.5 h-3.5 text-blue-300" />
               <span>{dict.footer.sourceCode}</span>
             </div>
           </LiquidGlass>
@@ -76,7 +76,7 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
               window.open("https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases", "_blank")
             }}
           >
-            <span className="text-xs font-bold text-slate-800">{dict.footer.releases}</span>
+            <span className="text-xs font-bold text-white">{dict.footer.releases}</span>
           </LiquidGlass>
 
           <LiquidGlass
@@ -93,7 +93,7 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
               window.open("https://github.com/egggggod/HoldTranslate-plugin-for-chrome/issues", "_blank")
             }}
           >
-            <span className="text-xs font-bold text-slate-800">{dict.footer.issues}</span>
+            <span className="text-xs font-bold text-white">{dict.footer.issues}</span>
           </LiquidGlass>
 
           <LiquidGlass
@@ -108,8 +108,8 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
             padding="6px 14px"
             onClick={onToggleLang}
           >
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <Globe className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+              <Globe className="w-3.5 h-3.5 text-blue-300" />
               <span>{lang === "en" ? "简体中文" : "English"}</span>
             </div>
           </LiquidGlass>
@@ -117,9 +117,9 @@ export default function Footer({ dict, lang, onToggleLang, accentColor, settings
       </div>
 
       {/* Acknowledgments & Copyright */}
-      <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-black/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
+      <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60 font-medium">
         <div className="flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+          <Sparkles className="w-3.5 h-3.5 text-purple-300" />
           <span>{dict.footer.acknowledgments}</span>
         </div>
         <div>

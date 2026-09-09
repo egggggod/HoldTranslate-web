@@ -229,11 +229,17 @@ const GlassContainer = forwardRef<
     const mouseX = mouseOffset?.x || 0
     const mouseY = mouseOffset?.y || 0
 
+    const { backgroundColor: _ignoredBg, ...cleanStyle } = style || {}
+    const outerStyle: React.CSSProperties = {
+      borderRadius: `${cornerRadius}px`,
+      ...cleanStyle,
+    }
+
     return (
       <div
         ref={ref}
         className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`}
-        style={style}
+        style={outerStyle}
         onClick={onClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -264,20 +270,35 @@ const GlassContainer = forwardRef<
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
             backgroundColor: overLight
               ? isHovered
-                ? "rgba(255, 255, 255, 0.45)"
-                : "rgba(255, 255, 255, 0.35)"
+                ? "rgba(255, 255, 255, 0.08)"
+                : "rgba(255, 255, 255, 0.04)"
               : isHovered
-              ? "rgba(15, 23, 42, 0.55)"
-              : "rgba(15, 23, 42, 0.4)",
+              ? "rgba(15, 23, 42, 0.25)"
+              : "rgba(15, 23, 42, 0.12)",
             boxShadow: overLight
               ? isHovered
-                ? "0 25px 60px -10px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.7) inset, 0 1px 3px rgba(0, 0, 0, 0.08)"
-                : "0 18px 45px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.55) inset, 0 1px 2px rgba(0, 0, 0, 0.05)"
+                ? "0 25px 70px -10px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(0, 0, 0, 0.2)"
+                : "0 18px 50px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.35) inset, 0 1px 2px rgba(0, 0, 0, 0.15)"
               : isHovered
-              ? "0 25px 60px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.25) inset"
-              : "0 18px 45px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15) inset",
+              ? "0 25px 70px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.25) inset"
+              : "0 18px 50px -10px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15) inset",
           }}
         >
+          {/* Over light layer 1 - subtle darkening matching liquid-glass-react */}
+          <div
+            className={`pointer-events-none absolute inset-0 bg-black transition-all duration-150 ease-in-out ${
+              overLight ? "opacity-20" : "opacity-0"
+            }`}
+            style={{ borderRadius: `${cornerRadius}px` }}
+          />
+          {/* Over light layer 2 - mix-blend-overlay contrast punch matching liquid-glass-react */}
+          <div
+            className={`pointer-events-none absolute inset-0 bg-black mix-blend-overlay transition-all duration-150 ease-in-out ${
+              overLight ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ borderRadius: `${cornerRadius}px` }}
+          />
+
           {/* backdrop refraction layer */}
           <span
             className="glass__warp pointer-events-none"
@@ -296,17 +317,42 @@ const GlassContainer = forwardRef<
             style={{
               borderRadius: `${cornerRadius}px`,
               padding: "1.5px",
-              mixBlendMode: overLight ? "normal" : "screen",
-              opacity: overLight ? 0.8 : 0.4,
+              mixBlendMode: "screen",
+              opacity: 0.25,
               WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
+              boxShadow:
+                "0 0 0 0.5px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(255, 255, 255, 0.25) inset, 0 1px 4px rgba(0, 0, 0, 0.35)",
               background: `linear-gradient(
                 ${135 + mouseX * 1.2}deg,
-                rgba(255, 255, 255, 0.1) 0%,
-                rgba(255, 255, 255, ${overLight ? 0.7 : 0.4}) ${Math.max(10, 33 + mouseY * 0.3)}%,
-                rgba(255, 255, 255, ${overLight ? 0.9 : 0.6}) ${Math.min(90, 66 + mouseY * 0.4)}%,
-                rgba(255, 255, 255, 0.1) 100%
+                rgba(255, 255, 255, 0.0) 0%,
+                rgba(255, 255, 255, ${0.12 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
+                rgba(255, 255, 255, ${0.4 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
+                rgba(255, 255, 255, 0.0) 100%
+              )`,
+            }}
+          />
+
+          {/* Border layer 2 - Overlay blend mode highlight */}
+          <span
+            className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+            style={{
+              borderRadius: `${cornerRadius}px`,
+              padding: "1.5px",
+              mixBlendMode: "overlay",
+              opacity: 0.35,
+              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              boxShadow:
+                "0 0 0 0.5px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(255, 255, 255, 0.25) inset, 0 1px 4px rgba(0, 0, 0, 0.35)",
+              background: `linear-gradient(
+                ${135 + mouseX * 1.2}deg,
+                rgba(255, 255, 255, 0.0) 0%,
+                rgba(255, 255, 255, ${0.12 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
+                rgba(255, 255, 255, ${0.4 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
+                rgba(255, 255, 255, 0.0) 100%
               )`,
             }}
           />
@@ -317,7 +363,7 @@ const GlassContainer = forwardRef<
               className="pointer-events-none absolute inset-0 transition-opacity duration-300"
               style={{
                 borderRadius: `${cornerRadius}px`,
-                opacity: isHovered ? (overLight ? 0.35 : 0.5) : 0,
+                opacity: isHovered ? 0.45 : 0,
                 background: `radial-gradient(circle at ${50 + mouseX * 0.5}% ${
                   30 + mouseY * 0.5
                 }%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 65%)`,
@@ -328,13 +374,9 @@ const GlassContainer = forwardRef<
 
           {/* User Content */}
           <div
-            className={`relative z-10 w-full transition-colors duration-200 ${
-              overLight ? "text-slate-900" : "text-white"
-            }`}
+            className="relative z-10 w-full transition-colors duration-200 text-white"
             style={{
-              textShadow: overLight
-                ? "0px 1px 1px rgba(255, 255, 255, 0.8)"
-                : "0px 2px 10px rgba(0, 0, 0, 0.6)",
+              textShadow: "0px 2px 12px rgba(0, 0, 0, 0.65)",
             }}
           >
             {children}

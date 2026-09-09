@@ -68,14 +68,14 @@ export default function FeatureGrid({ dict, accentColor, settings }: FeatureGrid
   return (
     <section id="features" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={gridContainerRef}>
       <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/60 border border-white/80 shadow-sm text-xs font-semibold text-slate-800 mb-4 backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+          <Sparkles className="w-3.5 h-3.5 text-purple-300" />
           <span>{dict.features.badge}</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-md">
           {dict.features.title}
         </h2>
-        <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium">
+        <p className="text-white/85 text-base sm:text-lg leading-relaxed font-medium drop-shadow-xs">
           {dict.features.desc}
         </p>
       </div>
@@ -103,28 +103,28 @@ export default function FeatureGrid({ dict, accentColor, settings }: FeatureGrid
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <div
-                      className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md border border-white/60"
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md border border-white/40"
                       style={{
-                        backgroundColor: `${f.color}20`,
+                        backgroundColor: `${f.color}25`,
                         color: f.color,
                       }}
                     >
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/5 text-slate-600 border border-black/5">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-black/20 text-white/80 border border-white/10">
                       {f.tag}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">
+                  <h3 className="text-xl font-bold text-white mb-3 tracking-tight">
                     {f.title}
                   </h3>
-                  <p className="text-slate-700 text-sm leading-relaxed font-medium">
+                  <p className="text-white/80 text-sm leading-relaxed font-medium">
                     {f.desc}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-4 border-t border-black/5 flex items-center justify-between">
+                <div className="pt-6 mt-4 border-t border-white/10 flex items-center justify-between">
                   <LiquidGlass
                     mode={settings.mode}
                     displacementScale={25}
@@ -140,9 +140,9 @@ export default function FeatureGrid({ dict, accentColor, settings }: FeatureGrid
                       if (el) el.scrollIntoView({ behavior: "smooth" })
                     }}
                   >
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-white">
                       <span>{f.actionText}</span>
-                      <ArrowUpRight className="w-3 h-3 text-blue-600" />
+                      <ArrowUpRight className="w-3 h-3 text-blue-300" />
                     </div>
                   </LiquidGlass>
 

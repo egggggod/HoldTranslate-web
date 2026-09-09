@@ -95,14 +95,14 @@ export default function InteractiveDemo({
     <section id="demo" className="py-20 px-4 max-w-7xl mx-auto select-none" ref={demoContainerRef}>
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/60 border border-white/80 shadow-sm text-xs font-semibold text-slate-800 mb-4 backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/20 border border-white/20 shadow-sm text-xs font-semibold text-white mb-4 backdrop-blur-md">
+          <Sparkles className="w-3.5 h-3.5 text-blue-300" />
           <span>{dict.demo.badge}</span>
         </div>
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+        <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-md">
           {dict.demo.title}
         </h2>
-        <p className="text-slate-700 text-base sm:text-lg leading-relaxed font-medium">
+        <p className="text-white/85 text-base sm:text-lg leading-relaxed font-medium drop-shadow-xs">
           {dict.demo.desc}
         </p>
       </div>
@@ -126,14 +126,14 @@ export default function InteractiveDemo({
           >
             <div className="flex flex-col w-full overflow-hidden">
               {/* Browser Header Bar */}
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-black/10 bg-white/40 backdrop-blur-md">
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/15 bg-white/10 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-rose-500/90 shadow-xs" />
                   <span className="w-3 h-3 rounded-full bg-amber-500/90 shadow-xs" />
                   <span className="w-3 h-3 rounded-full bg-emerald-500/90 shadow-xs" />
                 </div>
 
-                <div className="flex-1 max-w-xs sm:max-w-sm mx-4 px-3 py-1 rounded-full bg-black/5 border border-black/5 text-xs font-mono text-slate-600 text-center truncate">
+                <div className="flex-1 max-w-xs sm:max-w-sm mx-4 px-3 py-1 rounded-full bg-black/20 border border-white/15 text-xs font-mono text-white/80 text-center truncate">
                   {activeTab === "tech" && "https://tech-times.org/ai-fluid-interfaces"}
                   {activeTab === "video" && "https://www.youtube.com/watch?v=ht-timedtext"}
                   {activeTab === "paper" && "https://arxiv.org/abs/2609.12345v1"}
@@ -151,12 +151,12 @@ export default function InteractiveDemo({
                   padding="6px"
                   onClick={resetAll}
                 >
-                  <RotateCcw className="w-3.5 h-3.5 text-slate-700" />
+                  <RotateCcw className="w-3.5 h-3.5 text-white/80" />
                 </LiquidGlass>
               </div>
 
               {/* Tabs as LiquidGlass Buttons */}
-              <div className="flex items-center gap-2 p-3 border-b border-black/5 bg-white/20">
+              <div className="flex items-center gap-2 p-3 border-b border-white/10 bg-black/10">
                 <LiquidGlass
                   mode={settings.mode}
                   displacementScale={35}
@@ -165,18 +165,20 @@ export default function InteractiveDemo({
                   aberrationIntensity={settings.aberrationIntensity}
                   elasticity={0.25}
                   cornerRadius={14}
-                  overLight={activeTab === "tech" ? false : settings.overLight}
+                  overLight={settings.overLight}
                   padding="6px 14px"
-                  style={activeTab === "tech" ? { backgroundColor: accentColor } : {}}
                   onClick={() => setActiveTab("tech")}
                 >
                   <div
                     className={`flex items-center gap-1.5 text-xs font-bold ${
-                      activeTab === "tech" ? "text-white" : "text-slate-700"
+                      activeTab === "tech" ? "text-white" : "text-white/70"
                     }`}
                   >
-                    <Globe2 className="w-3.5 h-3.5" />
+                    <Globe2 className={`w-3.5 h-3.5 ${activeTab === "tech" ? "text-blue-300" : ""}`} />
                     <span>{dict.demo.tabTech}</span>
+                    {activeTab === "tech" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse ml-0.5" />
+                    )}
                   </div>
                 </LiquidGlass>
 
@@ -188,18 +190,20 @@ export default function InteractiveDemo({
                   aberrationIntensity={settings.aberrationIntensity}
                   elasticity={0.25}
                   cornerRadius={14}
-                  overLight={activeTab === "video" ? false : settings.overLight}
+                  overLight={settings.overLight}
                   padding="6px 14px"
-                  style={activeTab === "video" ? { backgroundColor: accentColor } : {}}
                   onClick={() => setActiveTab("video")}
                 >
                   <div
                     className={`flex items-center gap-1.5 text-xs font-bold ${
-                      activeTab === "video" ? "text-white" : "text-slate-700"
+                      activeTab === "video" ? "text-white" : "text-white/70"
                     }`}
                   >
-                    <Tv className="w-3.5 h-3.5" />
+                    <Tv className={`w-3.5 h-3.5 ${activeTab === "video" ? "text-blue-300" : ""}`} />
                     <span>{dict.demo.tabVideo}</span>
+                    {activeTab === "video" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse ml-0.5" />
+                    )}
                   </div>
                 </LiquidGlass>
 
@@ -211,18 +215,20 @@ export default function InteractiveDemo({
                   aberrationIntensity={settings.aberrationIntensity}
                   elasticity={0.25}
                   cornerRadius={14}
-                  overLight={activeTab === "paper" ? false : settings.overLight}
+                  overLight={settings.overLight}
                   padding="6px 14px"
-                  style={activeTab === "paper" ? { backgroundColor: accentColor } : {}}
                   onClick={() => setActiveTab("paper")}
                 >
                   <div
                     className={`flex items-center gap-1.5 text-xs font-bold ${
-                      activeTab === "paper" ? "text-white" : "text-slate-700"
+                      activeTab === "paper" ? "text-white" : "text-white/70"
                     }`}
                   >
-                    <Bookmark className="w-3.5 h-3.5" />
+                    <Bookmark className={`w-3.5 h-3.5 ${activeTab === "paper" ? "text-blue-300" : ""}`} />
                     <span>{dict.demo.tabPaper}</span>
+                    {activeTab === "paper" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse ml-0.5" />
+                    )}
                   </div>
                 </LiquidGlass>
               </div>
@@ -230,7 +236,7 @@ export default function InteractiveDemo({
               {/* Sandbox Inner Body */}
               <div className="p-6 sm:p-8 min-h-[380px] flex flex-col justify-center relative">
                 {/* Hold Hint Badge */}
-                <div className="absolute top-3 right-4 flex items-center gap-1.5 text-[11px] font-bold text-blue-700 bg-blue-50/80 px-2.5 py-1 rounded-full border border-blue-200/60 shadow-xs">
+                <div className="absolute top-3 right-4 flex items-center gap-1.5 text-[11px] font-bold text-blue-200 bg-blue-500/20 px-2.5 py-1 rounded-full border border-blue-400/40 shadow-xs backdrop-blur-xs">
                   <MousePointerClick className="w-3.5 h-3.5 animate-pulse" />
                   <span>{dict.demo.hint}</span>
                 </div>
@@ -238,7 +244,7 @@ export default function InteractiveDemo({
                 {/* TAB 1: Tech Article */}
                 {activeTab === "tech" && (
                   <div className="space-y-5">
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug">
                       {dict.demo.techTitle}
                     </h3>
 
@@ -248,10 +254,10 @@ export default function InteractiveDemo({
                       }
                       onMouseUp={cancelHold}
                       onMouseLeave={cancelHold}
-                      className="relative p-5 rounded-2xl transition-all cursor-pointer bg-white/40 hover:bg-white/65 border border-white/70 shadow-xs"
+                      className="relative p-5 rounded-2xl transition-all cursor-pointer bg-white/10 hover:bg-white/20 border border-white/25 shadow-md"
                     >
                       {holdingId === "tech-p" && (
-                        <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 text-white text-[11px] font-mono shadow-md">
+                        <div className="absolute top-2 right-2 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/90 text-white text-[11px] font-mono shadow-md border border-white/20">
                           <span>{Math.round(holdProgress)}%</span>
                           <div
                             className="w-2.5 h-2.5 rounded-full border-2 border-white border-t-transparent animate-spin"
@@ -259,36 +265,30 @@ export default function InteractiveDemo({
                         </div>
                       )}
 
-                      <p className="text-sm sm:text-base text-slate-800 leading-relaxed font-medium">
+                      <p className="text-sm sm:text-base text-white/90 leading-relaxed font-medium">
                         {dict.demo.techOriginal}
                       </p>
 
                       {translatedTech && (
                         <div
-                          className="mt-4 pt-3 border-t transition-all rounded-xl px-3 py-2.5"
+                          className="mt-4 pt-3 border-t transition-all rounded-xl px-3 py-2.5 bg-white/15"
                           style={{
-                            backgroundColor: `${accentColor}15`,
-                            borderColor: `${accentColor}30`,
+                            borderColor: `${accentColor}50`,
                           }}
                         >
                           <div className="flex items-center justify-between mb-1.5">
                             <span
-                              className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                              style={{
-                                backgroundColor: `${accentColor}25`,
-                                color: accentColor,
-                              }}
+                              className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/20 text-blue-200 border border-white/30"
                             >
                               {activeEngine === "google" && "Google Translate"}
                               {activeEngine === "bing" && "Microsoft Translator"}
                               {activeEngine === "deepseek" && "DeepSeek Chat"}
                               {activeEngine === "custom" && "Custom OpenAI"}
                             </span>
-                            <span className="text-[10px] text-slate-500 font-mono font-bold">0ms instant</span>
+                            <span className="text-[10px] text-white/70 font-mono font-bold">0ms instant</span>
                           </div>
                           <p
-                            className="text-sm sm:text-base leading-relaxed font-bold"
-                            style={{ color: accentColor }}
+                            className="text-sm sm:text-base leading-relaxed font-bold text-blue-200"
                           >
                             {dict.demo.techTranslated}
                           </p>
@@ -339,19 +339,19 @@ export default function InteractiveDemo({
                       }
                       onMouseUp={cancelHold}
                       onMouseLeave={cancelHold}
-                      className="p-4 rounded-2xl transition-all cursor-pointer bg-white/40 hover:bg-white/65 border border-white/70 shadow-xs"
+                      className="p-4 rounded-2xl transition-all cursor-pointer bg-white/10 hover:bg-white/20 border border-white/25 shadow-md"
                     >
-                      <span className="text-xs font-bold text-blue-600 block mb-1">
+                      <span className="text-xs font-bold text-blue-300 block mb-1">
                         {dict.demo.videoTag}
                       </span>
-                      <h4 className="text-base font-bold text-slate-900 leading-snug">
+                      <h4 className="text-base font-bold text-white leading-snug">
                         {dict.demo.videoTitleOriginal}
                       </h4>
 
                       {translatedVideoTitle && (
                         <div
-                          className="mt-2.5 pt-2.5 border-t text-sm font-bold"
-                          style={{ color: accentColor, borderColor: `${accentColor}30` }}
+                          className="mt-2.5 pt-2.5 border-t text-sm font-bold text-blue-200"
+                          style={{ borderColor: `${accentColor}40` }}
                         >
                           {dict.demo.videoTitleTranslated}
                         </div>
@@ -363,11 +363,11 @@ export default function InteractiveDemo({
                 {/* TAB 3: Academic Paper */}
                 {activeTab === "paper" && (
                   <div className="space-y-5">
-                    <div className="border-b border-black/10 pb-2.5">
-                      <span className="text-[11px] font-mono font-bold text-purple-700 uppercase tracking-wider block mb-1">
+                    <div className="border-b border-white/20 pb-2.5">
+                      <span className="text-[11px] font-mono font-bold text-purple-300 uppercase tracking-wider block mb-1">
                         arXiv:2609.12345v1 [cs.HC]
                       </span>
-                      <h3 className="text-xl font-serif font-bold text-slate-900 leading-tight">
+                      <h3 className="text-xl font-serif font-bold text-white leading-tight">
                         {dict.demo.paperTitle}
                       </h3>
                     </div>
@@ -378,19 +378,17 @@ export default function InteractiveDemo({
                       }
                       onMouseUp={cancelHold}
                       onMouseLeave={cancelHold}
-                      className="p-5 rounded-2xl transition-all cursor-pointer bg-white/40 hover:bg-white/65 border border-white/70 shadow-xs"
+                      className="p-5 rounded-2xl transition-all cursor-pointer bg-white/10 hover:bg-white/20 border border-white/25 shadow-md"
                     >
-                      <p className="text-sm font-serif text-slate-800 leading-relaxed font-medium">
+                      <p className="text-sm font-serif text-white/90 leading-relaxed font-medium">
                         {dict.demo.paperOriginal}
                       </p>
 
                       {translatedPaper && (
                         <div
-                          className="mt-3 pt-3 border-t font-serif text-sm font-bold leading-relaxed rounded-xl px-3 py-2"
+                          className="mt-3 pt-3 border-t font-serif text-sm font-bold leading-relaxed rounded-xl px-3 py-2 bg-white/15 text-blue-200"
                           style={{
-                            backgroundColor: `${accentColor}12`,
-                            borderColor: `${accentColor}30`,
-                            color: accentColor,
+                            borderColor: `${accentColor}40`,
                           }}
                         >
                           {dict.demo.paperTranslated}
@@ -421,22 +419,22 @@ export default function InteractiveDemo({
           >
             <div className="flex flex-col gap-5 text-left">
               {/* Island Header */}
-              <div className="flex items-center justify-between border-b border-black/10 pb-3">
+              <div className="flex items-center justify-between border-b border-white/20 pb-3">
                 <div>
-                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                    <Sliders className="w-4 h-4 text-blue-600" />
+                  <h3 className="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-blue-300" />
                     <span>{dict.demo.islandTitle}</span>
                   </h3>
-                  <p className="text-xs text-slate-600 font-medium">{dict.demo.islandSubtitle}</p>
+                  <p className="text-xs text-white/80 font-medium">{dict.demo.islandSubtitle}</p>
                 </div>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
                   {dict.demo.readyStatus}
                 </span>
               </div>
 
               {/* Translation Engine Selection as LiquidGlass Buttons */}
               <div>
-                <label className="text-xs font-bold text-slate-800 block mb-2">
+                <label className="text-xs font-bold text-white block mb-2">
                   {dict.demo.engineLabel}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -457,18 +455,17 @@ export default function InteractiveDemo({
                         aberrationIntensity={settings.aberrationIntensity}
                         elasticity={0.3}
                         cornerRadius={14}
-                        overLight={isSelected ? false : settings.overLight}
+                        overLight={settings.overLight}
                         padding="8px 12px"
-                        style={isSelected ? { backgroundColor: accentColor } : {}}
                         onClick={() => setActiveEngine(engine.id as any)}
                       >
                         <div
                           className={`flex items-center justify-between w-full text-xs font-bold ${
-                            isSelected ? "text-white" : "text-slate-800"
+                            isSelected ? "text-white" : "text-white/70"
                           }`}
                         >
                           <span className="truncate">{engine.name}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-white shrink-0 ml-1" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-blue-300 shrink-0 ml-1" />}
                         </div>
                       </LiquidGlass>
                     )
@@ -478,7 +475,7 @@ export default function InteractiveDemo({
 
               {/* Subtitle Mode as LiquidGlass Buttons */}
               <div>
-                <label className="text-xs font-bold text-slate-800 block mb-2">
+                <label className="text-xs font-bold text-white block mb-2">
                   {dict.demo.subtitlesLabel}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -490,17 +487,19 @@ export default function InteractiveDemo({
                     aberrationIntensity={settings.aberrationIntensity}
                     elasticity={0.3}
                     cornerRadius={14}
-                    overLight={subtitleMode === "bilingual" ? false : settings.overLight}
+                    overLight={settings.overLight}
                     padding="8px 12px"
-                    style={subtitleMode === "bilingual" ? { backgroundColor: accentColor } : {}}
                     onClick={() => setSubtitleMode("bilingual")}
                   >
                     <div
                       className={`text-center w-full text-xs font-bold ${
-                        subtitleMode === "bilingual" ? "text-white" : "text-slate-800"
+                        subtitleMode === "bilingual" ? "text-white" : "text-white/70"
                       }`}
                     >
                       {dict.demo.subBilingual}
+                      {subtitleMode === "bilingual" && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block ml-1.5 align-middle" />
+                      )}
                     </div>
                   </LiquidGlass>
 
@@ -512,17 +511,19 @@ export default function InteractiveDemo({
                     aberrationIntensity={settings.aberrationIntensity}
                     elasticity={0.3}
                     cornerRadius={14}
-                    overLight={subtitleMode === "target" ? false : settings.overLight}
+                    overLight={settings.overLight}
                     padding="8px 12px"
-                    style={subtitleMode === "target" ? { backgroundColor: accentColor } : {}}
                     onClick={() => setSubtitleMode("target")}
                   >
                     <div
                       className={`text-center w-full text-xs font-bold ${
-                        subtitleMode === "target" ? "text-white" : "text-slate-800"
+                        subtitleMode === "target" ? "text-white" : "text-white/70"
                       }`}
                     >
                       {dict.demo.subTargetOnly}
+                      {subtitleMode === "target" && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block ml-1.5 align-middle" />
+                      )}
                     </div>
                   </LiquidGlass>
                 </div>
@@ -530,10 +531,10 @@ export default function InteractiveDemo({
 
               {/* Color Palette Chips as LiquidGlass Circular Buttons */}
               <div>
-                <label className="text-xs font-bold text-slate-800 block mb-2">
+                <label className="text-xs font-bold text-white block mb-2">
                   {dict.demo.themeLabel}
                 </label>
-                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-white/40 border border-white/60">
+                <div className="flex items-center gap-3 p-2.5 rounded-2xl bg-black/25 border border-white/20">
                   {PALETTE.map((c) => {
                     const isSelected = accentColor.toLowerCase() === c.hex.toLowerCase()
                     return (
@@ -546,17 +547,19 @@ export default function InteractiveDemo({
                         aberrationIntensity={settings.aberrationIntensity}
                         elasticity={0.4}
                         cornerRadius={999}
-                        overLight={false}
+                        overLight={settings.overLight}
                         padding="4px"
-                        style={{
-                          backgroundColor: c.hex,
-                          boxShadow: isSelected
-                            ? `0 0 0 2.5px #ffffff, 0 0 14px ${c.hex}`
-                            : "0 2px 5px rgba(0,0,0,0.15)",
-                        }}
                         onClick={() => onSelectColor(c.hex)}
                       >
-                        <div className="w-5 h-5 flex items-center justify-center">
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center transition-transform hover:scale-105"
+                          style={{
+                            backgroundColor: c.hex,
+                            boxShadow: isSelected
+                              ? `0 0 0 2px #ffffff, 0 0 12px ${c.hex}`
+                              : "none",
+                          }}
+                        >
                           {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
                         </div>
                       </LiquidGlass>
@@ -568,8 +571,8 @@ export default function InteractiveDemo({
               {/* Trigger Timing Slider */}
               <div>
                 <div className="flex items-center justify-between text-xs mb-1.5">
-                  <span className="font-bold text-slate-800">{dict.demo.triggerTimeLabel}</span>
-                  <span className="font-mono font-bold text-blue-600">{triggerDuration}ms</span>
+                  <span className="font-bold text-white">{dict.demo.triggerTimeLabel}</span>
+                  <span className="font-mono font-bold text-blue-300">{triggerDuration}ms</span>
                 </div>
                 <input
                   type="range"
@@ -584,7 +587,7 @@ export default function InteractiveDemo({
 
               {/* Refraction Mode Quick Switcher */}
               <div>
-                <span className="text-[11px] font-bold text-slate-700 block mb-1.5">
+                <span className="text-[11px] font-bold text-white/90 block mb-1.5">
                   Refraction Modes (Liquid Glass)
                 </span>
                 <div className="grid grid-cols-4 gap-1 text-[11px]">
@@ -598,17 +601,19 @@ export default function InteractiveDemo({
                       aberrationIntensity={settings.aberrationIntensity}
                       elasticity={0.3}
                       cornerRadius={10}
-                      overLight={settings.mode === m ? false : settings.overLight}
+                      overLight={settings.overLight}
                       padding="4px"
-                      style={settings.mode === m ? { backgroundColor: accentColor } : {}}
                       onClick={() => onUpdateSettings({ ...settings, mode: m })}
                     >
                       <div
                         className={`text-center w-full capitalize font-bold ${
-                          settings.mode === m ? "text-white" : "text-slate-800"
+                          settings.mode === m ? "text-white" : "text-white/70"
                         }`}
                       >
                         {m}
+                        {settings.mode === m && (
+                          <span className="w-1 h-1 rounded-full bg-blue-400 inline-block ml-1 align-middle" />
+                        )}
                       </div>
                     </LiquidGlass>
                   ))}

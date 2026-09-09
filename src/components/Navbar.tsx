@@ -45,18 +45,14 @@ export default function Navbar({ lang, onToggleLang, dict, accentColor, settings
                   }}
                 />
               </div>
-              <span
-                className={`font-bold tracking-tight text-sm sm:text-base flex items-center gap-1.5 ${
-                  settings.overLight ? "text-slate-900" : "text-white"
-                }`}
-              >
+              <span className="font-bold tracking-tight text-sm sm:text-base flex items-center gap-1.5 text-white">
                 {dict.nav.brand}
                 <span
                   className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold shadow-xs"
                   style={{
-                    backgroundColor: `${accentColor}20`,
-                    color: accentColor,
-                    border: `1px solid ${accentColor}40`,
+                    backgroundColor: `${accentColor}30`,
+                    color: "#ffffff",
+                    border: `1px solid ${accentColor}60`,
                   }}
                 >
                   {dict.nav.version}
@@ -65,21 +61,17 @@ export default function Navbar({ lang, onToggleLang, dict, accentColor, settings
             </a>
 
             {/* Navigation Links */}
-            <div
-              className={`hidden md:flex items-center gap-5 text-xs sm:text-sm font-semibold ${
-                settings.overLight ? "text-slate-700" : "text-slate-200"
-              }`}
-            >
-              <a href="#demo" className="hover:text-blue-600 transition-colors">
+            <div className="hidden md:flex items-center gap-5 text-xs sm:text-sm font-semibold text-white/90">
+              <a href="#demo" className="hover:text-white transition-colors">
                 {dict.nav.demo}
               </a>
-              <a href="#features" className="hover:text-blue-600 transition-colors">
+              <a href="#features" className="hover:text-white transition-colors">
                 {dict.nav.features}
               </a>
-              <a href="#subtitles" className="hover:text-blue-600 transition-colors">
+              <a href="#subtitles" className="hover:text-white transition-colors">
                 {dict.nav.subtitles}
               </a>
-              <a href="#install" className="hover:text-blue-600 transition-colors">
+              <a href="#install" className="hover:text-white transition-colors">
                 {dict.nav.install}
               </a>
             </div>
@@ -132,18 +124,15 @@ export default function Navbar({ lang, onToggleLang, dict, accentColor, settings
                 aberrationIntensity={settings.aberrationIntensity}
                 elasticity={0.35}
                 cornerRadius={999}
-                overLight={false}
+                overLight={settings.overLight}
                 padding="6px 14px"
-                style={{
-                  backgroundColor: accentColor,
-                }}
                 onClick={() => {
                   window.location.href =
                     "https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.0/holdtranslate-chrome-extension-v1.7.0.zip"
                 }}
               >
                 <div className="flex items-center gap-1.5 text-xs font-bold text-white select-none">
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 text-blue-300" />
                   <span className="hidden sm:inline">{dict.nav.download}</span>
                 </div>
               </LiquidGlass>
