@@ -9,17 +9,21 @@ HoldTranslate Chrome 沉浸式翻译扩展官方介绍与交互体验落地页�
 > **超快速提醒：**  
 > 本项目是 **HoldTranslate** 的官方产品展示落地页与实时交互工坊。全面基于 Next.js 15、Tailwind CSS 以及源自 [`rdev/liquid-glass-react`](https://github.com/rdev/liquid-glass-react) 的 Apple Liquid Glass 光学折射着色器体系构建。访问者无需安装任何插件，即可在浏览器中真实体验长按网页翻译、调节控制中枢面板与查看 YouTube 0ms 预加载字幕。
 
-[![网站上线](https://img.shields.io/badge/Website-Live%20Demo-blue.svg)](https://egggggod.github.io/HoldTranslate-web/)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black.svg?logo=vercel)](https://vercel.com)
+[![网站上线](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-blue.svg)](https://egggggod.github.io/HoldTranslate-web/)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15.3-black.svg)](https://nextjs.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0-38bdf8.svg)](https://tailwindcss.com/)
-[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Pages-green.svg)](https://github.com/egggggod/HoldTranslate-web/actions)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-自动化构建-green.svg)](https://github.com/egggggod/HoldTranslate-web/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fegggggod%2FHoldTranslate-web)
 
 ## 演示
 
 > 完美响应式适配现代 Chromium 内核桌面浏览器（Chrome、Edge、Brave 等），具备完整的 WebGL 与 SVG 置换着色器硬件加速能力。
 
-访问在线部署地址：**[https://egggggod.github.io/HoldTranslate-web/](https://egggggod.github.io/HoldTranslate-web/)**
+- **Vercel 全球边缘节点（推荐访问）**：[https://holdtranslate-web.vercel.app](https://holdtranslate-web.vercel.app) *(或您的 Vercel 项目绑定域名)*
+- **GitHub Pages 静态镜像**：[https://egggggod.github.io/HoldTranslate-web/](https://egggggod.github.io/HoldTranslate-web/)
 
 ### 1. 流体毛玻璃控制中枢与长按模拟器
 ![在线交互演示预览](public/assets/demo-subtitles.png)
@@ -33,7 +37,7 @@ HoldTranslate Chrome 沉浸式翻译扩展官方介绍与交互体验落地页�
 
 1. **Apple VisionOS 流体毛玻璃引擎**：忠实复刻 `rdev/liquid-glass-react` 的光学置换着色器、RGB 色散通道与基于物理的光标弹性形变，呈现真实的晶体透光与折射质感。
 2. **双模实时交互工作坊**：内置高保真网页模拟视窗，用户可在科技资讯、视频标题及学术论文上真实按住鼠标左键（~500ms 触发缓冲），直观体验双语字幕滑入与复原，右侧无缝衔接 1:1 还原的毛玻璃设置中枢。
-3. **自动化静态导出与部署流水线**：基于 Next.js 15 纯静态导出（`output: 'export'`），配置适配 GitHub Pages 仓库路径的动态 `basePath`，并通过 GitHub Actions 实现推送即自动构建上线。
+3. **双环境智能自适应架构**：在 **Vercel** 托管环境下自动启用 Next.js 原生模式与根路径 `/`，享受全球边缘网络（Edge CDN）极速分发与图像优化；在 **GitHub Pages** 下自动回退至纯静态导出（`output: 'export'`）与仓库子路径。
 
 ## 项目结构
 
@@ -71,7 +75,8 @@ HoldTranslate-web/
 │   │   └── index.tsx           # 主落地页面入口
 │   └── styles/
 │       └── globals.css         # Tailwind v4 指令与极光流体动画
-├── next.config.ts              # 静态导出与动态 basePath 配置
+├── vercel.json                 # Vercel 生产级安全标头与长期缓存配置
+├── next.config.ts              # 智能双环境 (Vercel / GitHub Pages) 构建配置
 ├── postcss.config.mjs          # PostCSS 与 Tailwind PostCSS 插件配置
 ├── tsconfig.json               # TypeScript 严苛模式配置
 ├── package.json                # 项目依赖与 npm 脚本配置
@@ -88,34 +93,28 @@ HoldTranslate-web/
 - 🌐 **无感中英双语即时切换**：全站所有标题、交互卡片与按钮文案均支持中英双语瞬时置换。
 - 🎨 **全局主题色联动控制**：点击 6 款苹果经典调色盘圆环，全站流光、激活光晕与卡片边框色彩即时响应。
 - 📱 **1:1 插件设置中枢**：高精度模拟 HoldTranslate 扩展的实际弹窗，支持切换 Google / 微软 / DeepSeek / 自定义 API 引擎与字幕模式。
-- 🚀 **GitHub Actions 自动化部署**：每次向 `main` 分支提交代码，均会自动触发静态构建并部署上线。
+- 🚀 **一键 Vercel 极速部署**：支持在 Vercel 上一键部署或通过 GitHub Actions 部署至 GitHub Pages。
 
-## 快速安装与本地运行
+## Vercel 一分钟托管指引
 
-在本地运行或调试本网站工程：
+将 HoldTranslate-web 部署至 Vercel 仅需 60 秒：
 
-1. **克隆本仓库**
+1. **方式一：一键点击部署按钮**
+   - 点击上方 **[Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fegggggod%2FHoldTranslate-web)** 按钮。
+   - 授权 GitHub 账户，确认项目名称后点击 **Deploy** 即可。
+
+2. **方式二：在 Vercel 控制台导入**
+   - 打开 [vercel.com/new](https://vercel.com/new)。
+   - 在 **Import Git Repository** 列表中找到并选择 `egggggod/HoldTranslate-web`。
+   - 框架预设保持为 **Next.js**（默认自动识别）。
+   - 点击 **Deploy**！之后每次向 `main` 分支执行 `git push`，Vercel 都会自动触发全球边缘极速部署。
+
+3. **方式三：Vercel CLI 命令行直接发布**
    ```bash
-   git clone https://github.com/egggggod/HoldTranslate-web.git
-   cd HoldTranslate-web
+   npx vercel
+   # 生产环境发布：
+   npx vercel --prod
    ```
-
-2. **安装项目依赖**
-   ```bash
-   npm install
-   ```
-
-3. **启动本地开发服务器**
-   ```bash
-   npm run dev
-   ```
-   使用现代浏览器访问 `http://localhost:3000` 即可实时预览。
-
-4. **构建静态生产产物**
-   ```bash
-   npm run build
-   ```
-   编译生成的静态 HTML/CSS/JS 产物将保存至 `./out` 目录，可直接供任何 Web 服务器托管。
 
 ## HoldTranslate 扩展上手指南
 

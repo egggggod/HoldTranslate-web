@@ -9,17 +9,21 @@ Official showcase and interactive playground website for the HoldTranslate Chrom
 > **A super quick reminder:**  
 > This website is the official landing page and live interactive playground for **HoldTranslate**. Fully built with Next.js 15, Tailwind CSS, and the Apple Liquid Glass refraction shader system inspired by [`rdev/liquid-glass-react`](https://github.com/rdev/liquid-glass-react). Visitors can experience authentic long-press web translation, real-time settings manipulation, and 0ms YouTube subtitle previews directly in their browser.
 
-[![Website](https://img.shields.io/badge/Website-Live%20Demo-blue.svg)](https://egggggod.github.io/HoldTranslate-web/)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black.svg?logo=vercel)](https://vercel.com)
+[![Website](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-blue.svg)](https://egggggod.github.io/HoldTranslate-web/)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15.3-black.svg)](https://nextjs.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0-38bdf8.svg)](https://tailwindcss.com/)
-[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Pages-green.svg)](https://github.com/egggggod/HoldTranslate-web/actions)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-Automated-green.svg)](https://github.com/egggggod/HoldTranslate-web/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fegggggod%2FHoldTranslate-web)
 
 ## Demo
 
 > Fully responsive and optimized for modern Chromium desktop browsers (Chrome, Edge, Brave) with full WebGL & SVG displacement shader support.
 
-Visit the live deployment here: **[https://egggggod.github.io/HoldTranslate-web/](https://egggggod.github.io/HoldTranslate-web/)**
+- **Vercel Global CDN (Recommended)**: [https://holdtranslate-web.vercel.app](https://holdtranslate-web.vercel.app) *(or your Vercel project domain)*
+- **GitHub Pages Static Mirror**: [https://egggggod.github.io/HoldTranslate-web/](https://egggggod.github.io/HoldTranslate-web/)
 
 ### 1. Interactive Liquid Glass Island & Long-Press Simulator
 ![Live Demo Preview](public/assets/demo-subtitles.png)
@@ -33,7 +37,7 @@ This project consists of three core engineering pillars:
 
 1. **Apple VisionOS Liquid Glass Engine**: Direct adaptation of the optical displacement shader, chromatic aberration channels, and physics-based cursor elasticity from `rdev/liquid-glass-react`, providing authentic crystal refractions and tactile reactivity.
 2. **Dual-Mode Interactive Playground**: A live simulated browser viewport where users can perform real long-press gestures (~500ms trigger buffer) on tech news, video titles, and research papers, seamlessly paired with a 1:1 floating liquid glass settings control island.
-3. **Automated Static Export Pipeline**: Configured with Next.js 15 static HTML export (`output: 'export'`), dynamic `basePath` resolution for GitHub Pages subpaths, and instant continuous deployment via GitHub Actions.
+3. **Smart Dual-Hosting Architecture**: Native Next.js serverless & Edge optimization when hosted on **Vercel**, with automatic fallback to static HTML export (`output: 'export'`) for **GitHub Pages**.
 
 ## Project Structure
 
@@ -71,7 +75,8 @@ HoldTranslate-web/
 │   │   └── index.tsx           # Main landing page entry
 │   └── styles/
 │       └── globals.css         # Tailwind v4 directives & aurora keyframe animations
-├── next.config.ts              # Static export & dynamic basePath configuration
+├── vercel.json                 # Vercel production security headers & asset caching
+├── next.config.ts              # Smart dual-environment (Vercel / GitHub Pages) config
 ├── postcss.config.mjs          # PostCSS with @tailwindcss/postcss
 ├── tsconfig.json               # TypeScript strict configuration
 ├── package.json                # Project dependencies and npm scripts
@@ -88,34 +93,28 @@ The codebase is structured cleanly with zero server dependencies, allowing the s
 - 🌐 **Instant Bilingual Localization**: Seamless one-click switching between English and Simplified Chinese across all headings, interactive cards, and tooltips.
 - 🎨 **Synchronized Color Theming**: Selecting any of the 6 Apple-grade palette chips dynamically propagates accent glow, borders, and halos across the entire page.
 - 📱 **1:1 Plugin Settings Island**: Interactive replica of the HoldTranslate Chrome extension popup, allowing visitors to test translation engines, subtitle modes, and timing buffers.
-- 🚀 **Automated GitHub Actions Deployment**: Every commit pushed to `main` triggers automated static compilation and deployment to GitHub Pages.
+- 🚀 **One-Click Vercel & GitHub Actions Deploy**: Deploy with one click to Vercel global edge network or utilize GitHub Actions for GitHub Pages.
 
-## Quick Install Guide
+## Deploying to Vercel (1-Minute Guide)
 
-To run this website locally on your computer:
+Deploying HoldTranslate-web to Vercel takes under 60 seconds:
 
-1. **Clone the repository**
+1. **Option A: One-Click Deploy Button**
+   - Click the **[Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fegggggod%2FHoldTranslate-web)** button above.
+   - Authorize your GitHub account, choose a project name, and click **Deploy**.
+
+2. **Option B: Import via Vercel Dashboard**
+   - Go to [vercel.com/new](https://vercel.com/new).
+   - Under **Import Git Repository**, find and select `egggggod/HoldTranslate-web`.
+   - Leave Framework Preset as **Next.js** (auto-detected).
+   - Click **Deploy**! Every subsequent `git push` to `main` will automatically trigger a new deployment.
+
+3. **Option C: Vercel CLI (For Terminal Users)**
    ```bash
-   git clone https://github.com/egggggod/HoldTranslate-web.git
-   cd HoldTranslate-web
+   npx vercel
+   # For production release:
+   npx vercel --prod
    ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the local development server**
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:3000` in Google Chrome to see the live site.
-
-4. **Build static production export**
-   ```bash
-   npm run build
-   ```
-   The compiled static files are generated in `./out` ready for any static web server.
 
 ## Getting Started with HoldTranslate Extension
 
