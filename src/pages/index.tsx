@@ -9,15 +9,16 @@ import FeatureGrid from "@/components/FeatureGrid"
 import SubtitleShowcase from "@/components/SubtitleShowcase"
 import QuickInstall from "@/components/QuickInstall"
 import Footer from "@/components/Footer"
+import TuningDock, { DEFAULT_SETTINGS, WALLPAPERS, type TuningSettings } from "@/components/LiquidGlass/TuningDock"
 import { en } from "@/locales/en"
 import { zh } from "@/locales/zh"
 
 export default function Home() {
   const [lang, setLang] = useState<"en" | "zh">("zh")
-  const [accentColor, setAccentColor] = useState<string>("#3b82f6")
+  const [accentColor, setAccentColor] = useState<string>("#2563eb")
+  const [settings, setSettings] = useState<TuningSettings>(DEFAULT_SETTINGS)
 
   useEffect(() => {
-    // Detect browser default language on mount
     if (typeof navigator !== "undefined") {
       const isEnglish = navigator.language.toLowerCase().startsWith("en")
       if (isEnglish) {
@@ -36,6 +37,8 @@ export default function Home() {
     lang === "zh"
       ? "HoldTranslate — 沉浸式长按即时网页翻译与优雅复原 · 专为 Google Chrome 打造"
       : "HoldTranslate — Immersive Long-Press Instant Web Translation & Restoration for Chrome"
+
+  const activeWallpaper = WALLPAPERS[settings.wallpaperIndex]?.url || WALLPAPERS[0].url
 
   return (
     <>
@@ -59,46 +62,80 @@ export default function Home() {
       </Head>
 
       <div
-        className="min-h-screen bg-[#060913] text-slate-100 selection:bg-blue-500 selection:text-white relative overflow-hidden"
+        className="min-h-screen text-slate-900 selection:bg-blue-600 selection:text-white relative overflow-hidden transition-colors duration-500"
         style={
           {
             "--accent-color": accentColor,
-            "--accent-glow": `${accentColor}40`,
+            "--accent-glow": `${accentColor}30`,
           } as React.CSSProperties
         }
       >
-        {/* Top Navbar */}
+        {/* High-Resolution Scenic Landscape Background */}
+        <div className="fixed inset-0 pointer-events-none -z-20 overflow-hidden">
+          <img
+            src={activeWallpaper}
+            alt="Scenic Background"
+            className="w-full h-full object-cover object-center transition-all duration-700 scale-105 filter brightness-[1.03] contrast-[1.02]"
+          />
+          {/* Subtle light ambient overlay for optimal readability */}
+          <div
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              settings.overLight
+                ? "bg-gradient-to-b from-white/40 via-white/20 to-white/50"
+                : "bg-slate-950/60 backdrop-blur-xs"
+            }`}
+          />
+          {/* Gentle Aurora Glow Balls behind the glass */}
+          <div
+            className="absolute top-1/4 left-1/3 w-[600px] h-[600px] rounded-full blur-[140px] opacity-30 pointer-events-none"
+            style={{ backgroundColor: accentColor }}
+          />
+          <div className="absolute top-2/3 right-1/4 w-[500px] h-[500px] rounded-full blur-[140px] opacity-25 bg-pink-300 pointer-events-none" />
+        </div>
+
+        {/* Top Floating Island Navbar */}
         <Navbar
           lang={lang}
           onToggleLang={toggleLang}
           dict={dict}
           accentColor={accentColor}
+          settings={settings}
         />
 
         {/* Hero Section */}
-        <Hero dict={dict} accentColor={accentColor} />
+        <Hero dict={dict} accentColor={accentColor} settings={settings} />
 
-        {/* Interactive Long-Press Simulator & Liquid Glass Island */}
+        {/* Interactive Long-Press Simulator & Liquid Glass Control Island */}
         <InteractiveDemo
           dict={dict}
           accentColor={accentColor}
           onSelectColor={setAccentColor}
+          settings={settings}
+          onUpdateSettings={setSettings}
         />
 
         {/* Six Architectural Pillars Feature Grid */}
-        <FeatureGrid dict={dict} accentColor={accentColor} />
+        <FeatureGrid dict={dict} accentColor={accentColor} settings={settings} />
 
         {/* YouTube Subtitles Showcase */}
-        <SubtitleShowcase dict={dict} accentColor={accentColor} />
+        <SubtitleShowcase dict={dict} accentColor={accentColor} settings={settings} />
 
         {/* Quick Install Guide */}
-        <QuickInstall dict={dict} accentColor={accentColor} />
+        <QuickInstall dict={dict} accentColor={accentColor} settings={settings} />
 
         {/* Standard Thinking-Claude Footer */}
         <Footer
           dict={dict}
           lang={lang}
           onToggleLang={toggleLang}
+          accentColor={accentColor}
+          settings={settings}
+        />
+
+        {/* Floating Liquid Glass Optical Lab Tuning Dock */}
+        <TuningDock
+          settings={settings}
+          onChange={setSettings}
           accentColor={accentColor}
         />
       </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { type CSSProperties, forwardRef, useCallback, useEffect, useId, useRef, useState } from "react"
+import React, { type CSSProperties, forwardRef, useCallback, useEffect, useId, useRef, useState } from "react"
 import { ShaderDisplacementGenerator, fragmentShaders } from "./shader-utils"
 import { displacementMap, polarDisplacementMap, prominentDisplacementMap } from "./utils"
 
@@ -9,8 +9,8 @@ const generateShaderDisplacementMap = (width: number, height: number): string =>
   if (typeof window === "undefined" || typeof document === "undefined") return ""
   try {
     const generator = new ShaderDisplacementGenerator({
-      width,
-      height,
+      width: Math.max(width, 32),
+      height: Math.max(height, 32),
       fragment: fragmentShaders.liquidGlass,
     })
     const dataUrl = generator.updateShader()
@@ -174,6 +174,7 @@ const GlassContainer = forwardRef<
     glassSize?: { width: number; height: number }
     onClick?: () => void
     mode?: "standard" | "polar" | "prominent" | "shader"
+    isHovered?: boolean
   }>
 >(
   (
@@ -181,26 +182,28 @@ const GlassContainer = forwardRef<
       children,
       className = "",
       style,
-      displacementScale = 25,
-      blurAmount = 12,
-      saturation = 180,
+      displacementScale = 60,
+      blurAmount = 0.1,
+      saturation = 140,
       aberrationIntensity = 2,
       onMouseEnter,
       onMouseLeave,
       onMouseDown,
       onMouseUp,
       active = false,
-      overLight = false,
+      overLight = true,
       cornerRadius = 999,
       padding = "16px 24px",
       glassSize = { width: 270, height: 69 },
       onClick,
       mode = "standard",
+      isHovered = false,
+      mouseOffset,
     },
     ref,
   ) => {
     const rawId = useId()
-    const filterId = "filter-" + rawId.replace(/:/g, "")
+    const filterId = "glass-filter-" + rawId.replace(/:/g, "")
     const [shaderMapUrl, setShaderMapUrl] = useState<string>("")
     const [mounted, setMounted] = useState(false)
 
@@ -219,9 +222,12 @@ const GlassContainer = forwardRef<
 
     const backdropStyle = {
       filter: isFirefox ? undefined : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
+      backdropFilter: `blur(${(overLight ? 16 : 6) + blurAmount * 36}px) saturate(${saturation}%)`,
+      WebkitBackdropFilter: `blur(${(overLight ? 16 : 6) + blurAmount * 36}px) saturate(${saturation}%)`,
     }
+
+    const mouseX = mouseOffset?.x || 0
+    const mouseY = mouseOffset?.y || 0
 
     return (
       <div
@@ -229,6 +235,10 @@ const GlassContainer = forwardRef<
         className={`relative ${className} ${active ? "active" : ""} ${Boolean(onClick) ? "cursor-pointer" : ""}`}
         style={style}
         onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
       >
         <GlassFilter
           mode={mode}
@@ -247,17 +257,26 @@ const GlassContainer = forwardRef<
             position: "relative",
             display: "inline-flex",
             alignItems: "center",
+            width: "100%",
+            height: "100%",
             padding,
             overflow: "hidden",
-            transition: "all 0.2s ease-in-out",
+            transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+            backgroundColor: overLight
+              ? isHovered
+                ? "rgba(255, 255, 255, 0.45)"
+                : "rgba(255, 255, 255, 0.35)"
+              : isHovered
+              ? "rgba(15, 23, 42, 0.55)"
+              : "rgba(15, 23, 42, 0.4)",
             boxShadow: overLight
-              ? "0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.4) inset"
-              : "0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15) inset",
+              ? isHovered
+                ? "0 25px 60px -10px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.7) inset, 0 1px 3px rgba(0, 0, 0, 0.08)"
+                : "0 18px 45px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.55) inset, 0 1px 2px rgba(0, 0, 0, 0.05)"
+              : isHovered
+              ? "0 25px 60px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.25) inset"
+              : "0 18px 45px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.15) inset",
           }}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
         >
           {/* backdrop refraction layer */}
           <span
@@ -271,11 +290,51 @@ const GlassContainer = forwardRef<
             }
           />
 
-          {/* user content */}
-          <div
-            className="relative z-10 w-full text-inherit"
+          {/* Border layer 1 - Screen blend mode highlight */}
+          <span
+            className="pointer-events-none absolute inset-0 transition-opacity duration-200"
             style={{
-              textShadow: overLight ? "0px 1px 2px rgba(255, 255, 255, 0.6)" : "0px 2px 10px rgba(0, 0, 0, 0.5)",
+              borderRadius: `${cornerRadius}px`,
+              padding: "1.5px",
+              mixBlendMode: overLight ? "normal" : "screen",
+              opacity: overLight ? 0.8 : 0.4,
+              WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+              background: `linear-gradient(
+                ${135 + mouseX * 1.2}deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, ${overLight ? 0.7 : 0.4}) ${Math.max(10, 33 + mouseY * 0.3)}%,
+                rgba(255, 255, 255, ${overLight ? 0.9 : 0.6}) ${Math.min(90, 66 + mouseY * 0.4)}%,
+                rgba(255, 255, 255, 0.1) 100%
+              )`,
+            }}
+          />
+
+          {/* Hover Specular Light Sheen */}
+          {Boolean(onClick) && (
+            <div
+              className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+              style={{
+                borderRadius: `${cornerRadius}px`,
+                opacity: isHovered ? (overLight ? 0.35 : 0.5) : 0,
+                background: `radial-gradient(circle at ${50 + mouseX * 0.5}% ${
+                  30 + mouseY * 0.5
+                }%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 65%)`,
+                mixBlendMode: "overlay",
+              }}
+            />
+          )}
+
+          {/* User Content */}
+          <div
+            className={`relative z-10 w-full transition-colors duration-200 ${
+              overLight ? "text-slate-900" : "text-white"
+            }`}
+            style={{
+              textShadow: overLight
+                ? "0px 1px 1px rgba(255, 255, 255, 0.8)"
+                : "0px 2px 10px rgba(0, 0, 0, 0.6)",
             }}
           >
             {children}
@@ -309,23 +368,24 @@ export interface LiquidGlassProps {
 
 export default function LiquidGlass({
   children,
-  displacementScale = 60,
-  blurAmount = 0.1,
-  saturation = 140,
-  aberrationIntensity = 2,
-  elasticity = 0.15,
+  displacementScale = 70,
+  blurAmount = 0.15,
+  saturation = 150,
+  aberrationIntensity = 2.5,
+  elasticity = 0.2,
   cornerRadius = 24,
   globalMousePos: externalGlobalMousePos,
   mouseOffset: externalMouseOffset,
   mouseContainer = null,
   className = "",
   padding = "16px 24px",
-  overLight = false,
+  overLight = true,
   style = {},
   mode = "standard",
   onClick,
 }: LiquidGlassProps) {
   const glassRef = useRef<HTMLDivElement>(null)
+  const [isHovered, setIsHovered] = useState(false)
   const [isActive, setIsActive] = useState(false)
   const [glassSize, setGlassSize] = useState({ width: 270, height: 69 })
   const [internalGlobalMousePos, setInternalGlobalMousePos] = useState({ x: 0, y: 0 })
@@ -378,25 +438,72 @@ export default function LiquidGlass({
     return () => window.removeEventListener("resize", updateGlassSize)
   }, [])
 
+  // Calculate directional scaling based on mouse position (mimics Apple's liquid stretch)
+  const calculateDirectionalScale = useCallback(() => {
+    if (!elasticity || elasticity <= 0 || !globalMousePos.x || !globalMousePos.y || !glassRef.current) {
+      return "scale(1)"
+    }
+
+    const rect = glassRef.current.getBoundingClientRect()
+    const pillCenterX = rect.left + rect.width / 2
+    const pillCenterY = rect.top + rect.height / 2
+    const pillWidth = glassSize.width || rect.width
+    const pillHeight = glassSize.height || rect.height
+
+    const deltaX = globalMousePos.x - pillCenterX
+    const deltaY = globalMousePos.y - pillCenterY
+
+    const edgeDistanceX = Math.max(0, Math.abs(deltaX) - pillWidth / 2)
+    const edgeDistanceY = Math.max(0, Math.abs(deltaY) - pillHeight / 2)
+    const edgeDistance = Math.sqrt(edgeDistanceX * edgeDistanceX + edgeDistanceY * edgeDistanceY)
+
+    const activationZone = 250
+    if (edgeDistance > activationZone) return "scale(1)"
+
+    const fadeInFactor = 1 - edgeDistance / activationZone
+    const centerDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    if (centerDistance === 0) return "scale(1)"
+
+    const normalizedX = deltaX / centerDistance
+    const normalizedY = deltaY / centerDistance
+
+    const stretchIntensity = Math.min(centerDistance / 300, 1) * elasticity * fadeInFactor
+    const scaleX = 1 + Math.abs(normalizedX) * stretchIntensity * 0.18 - Math.abs(normalizedY) * stretchIntensity * 0.08
+    const scaleY = 1 + Math.abs(normalizedY) * stretchIntensity * 0.18 - Math.abs(normalizedX) * stretchIntensity * 0.08
+
+    return `scaleX(${Math.max(0.92, Math.min(1.12, scaleX))}) scaleY(${Math.max(0.92, Math.min(1.12, scaleY))})`
+  }, [globalMousePos, elasticity, glassSize])
+
+  const transformScale = isActive && Boolean(onClick) ? "scale(0.96)" : calculateDirectionalScale()
+
+  const combinedStyle: React.CSSProperties = {
+    ...style,
+    transform: style.transform ? `${style.transform} ${transformScale}` : transformScale,
+    transition: "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+  }
+
   return (
     <GlassContainer
       ref={glassRef}
       className={className}
-      style={style}
+      style={combinedStyle}
       cornerRadius={cornerRadius}
-      displacementScale={overLight ? displacementScale * 0.5 : displacementScale}
+      displacementScale={overLight ? displacementScale * 0.6 : displacementScale}
       blurAmount={blurAmount}
       saturation={saturation}
       aberrationIntensity={aberrationIntensity}
       glassSize={glassSize}
       padding={padding}
       mouseOffset={mouseOffset}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onMouseDown={() => setIsActive(true)}
       onMouseUp={() => setIsActive(false)}
       active={isActive}
       overLight={overLight}
       onClick={onClick}
       mode={mode}
+      isHovered={isHovered}
     >
       {children}
     </GlassContainer>

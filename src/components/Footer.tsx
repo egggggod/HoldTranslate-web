@@ -1,20 +1,24 @@
 "use client"
 
-import React from "react"
-import { Github, Globe, Heart, Shield, Sparkles } from "lucide-react"
+import React, { useRef } from "react"
+import { Github, Globe, Sparkles } from "lucide-react"
+import LiquidGlass from "./LiquidGlass"
+import { type TuningSettings } from "./LiquidGlass/TuningDock"
 
 interface FooterProps {
   dict: any
   lang: "en" | "zh"
   onToggleLang: () => void
   accentColor: string
+  settings: TuningSettings
 }
 
-export default function Footer({ dict, lang, onToggleLang, accentColor }: FooterProps) {
+export default function Footer({ dict, lang, onToggleLang, accentColor, settings }: FooterProps) {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || ""
+  const footerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <footer className="relative mt-20 border-t border-white/10 bg-slate-950/80 backdrop-blur-2xl py-14 px-4 text-slate-400 text-sm">
+    <footer ref={footerRef} className="relative mt-20 border-t border-black/10 bg-white/40 backdrop-blur-2xl py-14 px-4 text-slate-700 text-sm select-none">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
         {/* Brand & Slogan */}
         <div className="flex flex-col items-center md:items-start gap-2">
@@ -22,61 +26,100 @@ export default function Footer({ dict, lang, onToggleLang, accentColor }: Footer
             <img
               src={`${basePath}/icons/icon48.png`}
               alt="HoldTranslate"
-              className="w-7 h-7 rounded-lg shadow"
+              className="w-7 h-7 rounded-full shadow-xs"
               onError={(e) => {
                 (e.target as HTMLElement).style.display = "none"
               }}
             />
-            <span className="text-lg font-bold text-white tracking-tight">HoldTranslate</span>
-            <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-white/10 text-slate-300">
+            <span className="text-lg font-extrabold text-slate-900 tracking-tight">HoldTranslate</span>
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-black/5 text-slate-700">
               v1.7.0
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-sm">{dict.footer.slogan}</p>
+          <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-sm">{dict.footer.slogan}</p>
           <p className="text-[11px] text-slate-500">{dict.footer.releaseNotice}</p>
         </div>
 
-        {/* Links */}
-        <div className="flex flex-wrap items-center justify-center gap-6 text-xs sm:text-sm font-medium">
-          <a
-            href="https://github.com/egggggod/HoldTranslate-web"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors flex items-center gap-1.5"
+        {/* Links as LiquidGlass Buttons */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <LiquidGlass
+            mode={settings.mode}
+            displacementScale={25}
+            blurAmount={settings.blurAmount}
+            saturation={settings.saturation}
+            aberrationIntensity={settings.aberrationIntensity}
+            elasticity={0.3}
+            cornerRadius={999}
+            overLight={settings.overLight}
+            padding="6px 14px"
+            onClick={() => {
+              window.open("https://github.com/egggggod/HoldTranslate-web", "_blank")
+            }}
           >
-            <Github className="w-4 h-4" />
-            <span>{dict.footer.sourceCode}</span>
-          </a>
-          <a
-            href="https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors"
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+              <Github className="w-3.5 h-3.5" />
+              <span>{dict.footer.sourceCode}</span>
+            </div>
+          </LiquidGlass>
+
+          <LiquidGlass
+            mode={settings.mode}
+            displacementScale={25}
+            blurAmount={settings.blurAmount}
+            saturation={settings.saturation}
+            aberrationIntensity={settings.aberrationIntensity}
+            elasticity={0.3}
+            cornerRadius={999}
+            overLight={settings.overLight}
+            padding="6px 14px"
+            onClick={() => {
+              window.open("https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases", "_blank")
+            }}
           >
-            {dict.footer.releases}
-          </a>
-          <a
-            href="https://github.com/egggggod/HoldTranslate-plugin-for-chrome/issues"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white transition-colors"
+            <span className="text-xs font-bold text-slate-800">{dict.footer.releases}</span>
+          </LiquidGlass>
+
+          <LiquidGlass
+            mode={settings.mode}
+            displacementScale={25}
+            blurAmount={settings.blurAmount}
+            saturation={settings.saturation}
+            aberrationIntensity={settings.aberrationIntensity}
+            elasticity={0.3}
+            cornerRadius={999}
+            overLight={settings.overLight}
+            padding="6px 14px"
+            onClick={() => {
+              window.open("https://github.com/egggggod/HoldTranslate-plugin-for-chrome/issues", "_blank")
+            }}
           >
-            {dict.footer.issues}
-          </a>
-          <button
+            <span className="text-xs font-bold text-slate-800">{dict.footer.issues}</span>
+          </LiquidGlass>
+
+          <LiquidGlass
+            mode={settings.mode}
+            displacementScale={25}
+            blurAmount={settings.blurAmount}
+            saturation={settings.saturation}
+            aberrationIntensity={settings.aberrationIntensity}
+            elasticity={0.3}
+            cornerRadius={999}
+            overLight={settings.overLight}
+            padding="6px 14px"
             onClick={onToggleLang}
-            className="hover:text-white transition-colors flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10"
           >
-            <Globe className="w-3.5 h-3.5" />
-            <span>{lang === "en" ? "简体中文" : "English"}</span>
-          </button>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+              <Globe className="w-3.5 h-3.5" />
+              <span>{lang === "en" ? "简体中文" : "English"}</span>
+            </div>
+          </LiquidGlass>
         </div>
       </div>
 
       {/* Acknowledgments & Copyright */}
-      <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-black/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium">
         <div className="flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <Sparkles className="w-3.5 h-3.5 text-purple-600" />
           <span>{dict.footer.acknowledgments}</span>
         </div>
         <div>
