@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+:root {
+  --background: #060913;
+  --foreground: #f1f5f9;
+  --accent-blue: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.4);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+  selection-background-color: #3b82f6;
+  selection-color: #ffffff;
+}
+
+/* Aurora background floating spheres */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(40px, -60px) scale(1.08);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.95);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(-50px, 50px) scale(1.1);
+  }
+  66% {
+    transform: translate(30px, -40px) scale(0.92);
+  }
+}
+
+@keyframes specular-sweep {
+  0% {
+    transform: translateX(-150%) rotate(25deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(250%) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 18s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 22s ease-in-out infinite;
+}
+
+.animate-specular {
+  animation: specular-sweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Glass highlight and refraction border overlays */
+.crystal-panel {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.crystal-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crystal-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 35px 70px -10px rgba(0, 0, 0, 0.6), 0 0 30px var(--accent-glow);
+}
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  cursor: pointer;
+  height: 6px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Webkit scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 15, 30, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
