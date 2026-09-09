@@ -9,7 +9,7 @@ HoldTranslate Chrome 沉浸式翻译扩展官方介绍与交互体验落地页�
 > **超快速提醒：**  
 > 本项目是 **HoldTranslate** 的官方产品展示落地页与实时交互工坊。全面基于 Next.js 15、Tailwind CSS 以及源自 [`rdev/liquid-glass-react`](https://github.com/rdev/liquid-glass-react) 的 Apple Liquid Glass 光学折射着色器体系构建。访问者无需安装任何插件，即可在浏览器中真实体验长按网页翻译、调节控制中枢面板与查看 YouTube 0ms 预加载字幕。
 
-[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black.svg?logo=vercel)](https://vercel.com)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black.svg?logo=vercel)](https://holdtranslate.vercel.app/)
 [![网站上线](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-blue.svg)](https://egggggod.github.io/HoldTranslate-web/)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15.3-black.svg)](https://nextjs.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0-38bdf8.svg)](https://tailwindcss.com/)
@@ -22,7 +22,8 @@ HoldTranslate Chrome 沉浸式翻译扩展官方介绍与交互体验落地页�
 
 > 完美响应式适配现代 Chromium 内核桌面浏览器（Chrome、Edge、Brave 等），具备完整的 WebGL 与 SVG 置换着色器硬件加速能力。
 
-- **Vercel 全球边缘节点（推荐访问）**：[https://holdtranslate-web.vercel.app](https://holdtranslate-web.vercel.app) *(或您的 Vercel 项目绑定域名)*
+- **Vercel 全球边缘节点（官方生产发布）**：[https://holdtranslate.vercel.app](https://holdtranslate.vercel.app)
+- **Vercel 项目仪表盘**：[https://vercel.com/egggggod/holdtranslate](https://vercel.com/egggggod/holdtranslate)
 - **GitHub Pages 静态镜像**：[https://egggggod.github.io/HoldTranslate-web/](https://egggggod.github.io/HoldTranslate-web/)
 
 ### 1. 流体毛玻璃控制中枢与长按模拟器
@@ -89,6 +90,8 @@ HoldTranslate-web/
 ## 特性
 
 - ⚡ **纯正 Apple 流体毛玻璃折射**：支持多种折射模式（`standard`、`polar`、`prominent`、`shader`）、色散分离与光标吸附弹性。
+- 🏔️ **浅色系全景风景美学底蕴**：精选高山晨曦、林间暖阳、高山静湖等高清自然全景壁纸，彻底摒弃沉闷纯黑，呈现清透高对比度的晶体卡片与按键视感。
+- 🎛️ **Apple 光学实验台（TuningDock）**：右下角常驻流体悬浮调参面板，支持实时微调置换比例、高斯模糊、饱和度、色散强度、弹性系数并秒级切换风景壁纸。
 - 🎯 **真实交互长按沙盒**：访问者可按住任意段落，直观体验环形进度条、双语字幕滑入以及二次长按优雅复原。
 - 🌐 **无感中英双语即时切换**：全站所有标题、交互卡片与按钮文案均支持中英双语瞬时置换。
 - 🎨 **全局主题色联动控制**：点击 6 款苹果经典调色盘圆环，全站流光、激活光晕与卡片边框色彩即时响应。

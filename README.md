@@ -9,7 +9,7 @@ Official showcase and interactive playground website for the HoldTranslate Chrom
 > **A super quick reminder:**  
 > This website is the official landing page and live interactive playground for **HoldTranslate**. Fully built with Next.js 15, Tailwind CSS, and the Apple Liquid Glass refraction shader system inspired by [`rdev/liquid-glass-react`](https://github.com/rdev/liquid-glass-react). Visitors can experience authentic long-press web translation, real-time settings manipulation, and 0ms YouTube subtitle previews directly in their browser.
 
-[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black.svg?logo=vercel)](https://vercel.com)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black.svg?logo=vercel)](https://holdtranslate.vercel.app/)
 [![Website](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-blue.svg)](https://egggggod.github.io/HoldTranslate-web/)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15.3-black.svg)](https://nextjs.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0-38bdf8.svg)](https://tailwindcss.com/)
@@ -22,7 +22,8 @@ Official showcase and interactive playground website for the HoldTranslate Chrom
 
 > Fully responsive and optimized for modern Chromium desktop browsers (Chrome, Edge, Brave) with full WebGL & SVG displacement shader support.
 
-- **Vercel Global CDN (Recommended)**: [https://holdtranslate-web.vercel.app](https://holdtranslate-web.vercel.app) *(or your Vercel project domain)*
+- **Vercel Global Edge (Official Production)**: [https://holdtranslate.vercel.app](https://holdtranslate.vercel.app)
+- **Vercel Project Dashboard**: [https://vercel.com/egggggod/holdtranslate](https://vercel.com/egggggod/holdtranslate)
 - **GitHub Pages Static Mirror**: [https://egggggod.github.io/HoldTranslate-web/](https://egggggod.github.io/HoldTranslate-web/)
 
 ### 1. Interactive Liquid Glass Island & Long-Press Simulator
@@ -89,6 +90,8 @@ The codebase is structured cleanly with zero server dependencies, allowing the s
 ## Features
 
 - ⚡ **Authentic Liquid Glass Refraction**: Supports multiple refraction modes (`standard`, `polar`, `prominent`, `shader`), chromatic aberration, and cursor-following elasticity.
+- 🏔️ **Light Scenic Landscape Aesthetics**: Carefully curated panoramic scenic landscape backgrounds (Alpine Dawn, Forest Sunlight, Azure Lake) replacing harsh pure dark backgrounds, paired with high-contrast adaptive optical cards.
+- 🎛️ **Apple Optical Tuning Dock**: Real-time floating control center to fine-tune displacement scale, blur amount, saturation, chromatic aberration, elasticity, and dynamically switch scenic wallpapers.
 - 🎯 **Interactive Long-Press Sandbox**: Visitors can physically press and hold mouse buttons on text blocks to experience the ~500ms trigger ring, smooth subtitle expansion, and secondary-hold restoration.
 - 🌐 **Instant Bilingual Localization**: Seamless one-click switching between English and Simplified Chinese across all headings, interactive cards, and tooltips.
 - 🎨 **Synchronized Color Theming**: Selecting any of the 6 Apple-grade palette chips dynamically propagates accent glow, borders, and halos across the entire page.
