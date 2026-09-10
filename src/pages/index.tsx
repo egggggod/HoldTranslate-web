@@ -83,12 +83,7 @@ export default function Home() {
               settings.overLight ? "bg-black/15" : "bg-transparent"
             }`}
           />
-          {/* Gentle Aurora Glow Balls behind the glass */}
-          <div
-            className="absolute top-1/4 left-1/3 w-[600px] h-[600px] rounded-full blur-[140px] opacity-30 pointer-events-none"
-            style={{ backgroundColor: accentColor }}
-          />
-          <div className="absolute top-2/3 right-1/4 w-[500px] h-[500px] rounded-full blur-[140px] opacity-25 bg-pink-300 pointer-events-none" />
+          {/* High contrast pure wallpaper layer for authentic specular glass refraction */}
         </div>
 
         {/* Top Floating Island Navbar */}

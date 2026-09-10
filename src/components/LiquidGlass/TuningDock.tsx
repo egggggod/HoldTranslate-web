@@ -36,20 +36,24 @@ interface TuningDockProps {
 
 export const WALLPAPERS = [
   {
+    name: "Golden Sunburst 强光逆光日落 (原演示同款)",
+    url: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=2400&q=85",
+  },
+  {
+    name: "Brighton Pier 夕照海岸码头 (card.png 同款)",
+    url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2400&q=85",
+  },
+  {
+    name: "Misty Blue Ridges 晨雾山脊 (button.png 同款)",
+    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2400&q=85",
+  },
+  {
+    name: "Forest Sunbeams 森林破晓光束",
+    url: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=2400&q=85",
+  },
+  {
     name: "Alpine Dawn 晨曦雪山",
     url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=2400&q=85",
-  },
-  {
-    name: "Sunlit Forest 林间晨光",
-    url: "https://images.unsplash.com/photo-1511497584788-87676104235f?auto=format&fit=crop&w=2400&q=85",
-  },
-  {
-    name: "Bright Clouds 晴空云海",
-    url: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=2400&q=85",
-  },
-  {
-    name: "Mountain Lake 澄澈高山湖",
-    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2400&q=85",
   },
 ]
 
