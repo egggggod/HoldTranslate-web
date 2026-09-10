@@ -149,8 +149,8 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
     resizeFBOs()
     window.addEventListener("resize", resizeFBOs)
 
-    // Render loop
-    const render = () => {
+    // High-performance render pass
+    const drawFrame = () => {
       if (!canvas || !gl || !bgProgram || !vBlurProgram || !hBlurProgram || !mainProgram || !quadBuffer) {
         return
       }
@@ -347,14 +347,24 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)
       }
-
-      animationFrameId = requestAnimationFrame(render)
     }
 
-    render()
+    const loop = () => {
+      drawFrame()
+      animationFrameId = requestAnimationFrame(loop)
+    }
+
+    animationFrameId = requestAnimationFrame(loop)
+
+    // Instant Scroll Sync: immediately redraws WebGL upon receiving scroll event
+    const handleScroll = () => {
+      drawFrame()
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
 
     return () => {
       cancelAnimationFrame(animationFrameId)
+      window.removeEventListener("scroll", handleScroll)
       window.removeEventListener("resize", resizeFBOs)
       if (wallpaperTex) gl.deleteTexture(wallpaperTex)
       if (bgFbo) {

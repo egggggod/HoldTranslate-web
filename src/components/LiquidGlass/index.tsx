@@ -548,12 +548,24 @@ export default function LiquidGlass({
     return `scaleX(${Math.max(0.92, Math.min(1.12, scaleX))}) scaleY(${Math.max(0.92, Math.min(1.12, scaleY))})`
   }, [globalMousePos, elasticity, glassSize])
 
-  const transformScale = isActive && Boolean(onClick) ? "scale(0.96)" : calculateDirectionalScale()
+  const transformScale =
+    isStudioActive
+      ? isActive && Boolean(onClick)
+        ? "scale(0.96)"
+        : "none"
+      : isActive && Boolean(onClick)
+        ? "scale(0.96)"
+        : calculateDirectionalScale()
 
   const combinedStyle: React.CSSProperties = {
     ...style,
-    transform: style.transform ? `${style.transform} ${transformScale}` : transformScale,
-    transition: "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+    transform:
+      transformScale !== "none"
+        ? style.transform
+          ? `${style.transform} ${transformScale}`
+          : transformScale
+        : style.transform,
+    transition: isStudioActive ? undefined : "transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
   }
 
   return (
