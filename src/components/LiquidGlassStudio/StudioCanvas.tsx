@@ -6,12 +6,14 @@ import {
   createQuadBuffer,
   createFBO,
   loadTexture,
+  computeGaussianKernelByRadius,
   type FBO,
 } from "./GLUtils"
 import {
   vertexShader,
   bgFragmentShader,
-  blurFragmentShader,
+  vBlurFragmentShader,
+  hBlurFragmentShader,
   mainFragmentShader,
 } from "./shaders"
 import { useStudio } from "./StudioContext"
@@ -26,18 +28,17 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const studio = useStudio()
 
-  // Spring cursor state
+  // Spring cursor state (Apple fluid physics)
   const mouseStateRef = useRef({
-    targetX: -1000,
-    targetY: -1000,
-    currentX: -1000,
-    currentY: -1000,
+    targetX: -2000,
+    targetY: -2000,
+    currentX: -2000,
+    currentY: -2000,
     vx: 0,
     vy: 0,
     inside: false,
   })
 
-  // Settings ref for render loop
   const settingsRef = useRef(settings)
   useEffect(() => {
     settingsRef.current = settings
@@ -76,20 +77,22 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
     })
 
     if (!gl) {
-      console.warn("WebGL2 is not supported in this browser. Degrading to CSS fallback.")
+      console.warn("WebGL2 is not supported. Gracefully degrading to SVG fallback.")
       studio?.setIsStudioEnabled(false)
       return
     }
 
     let quadBuffer: WebGLBuffer | null = null
     let bgProgram: WebGLProgram | null = null
-    let blurProgram: WebGLProgram | null = null
+    let vBlurProgram: WebGLProgram | null = null
+    let hBlurProgram: WebGLProgram | null = null
     let mainProgram: WebGLProgram | null = null
 
     try {
       quadBuffer = createQuadBuffer(gl)
       bgProgram = createProgram(gl, vertexShader, bgFragmentShader)
-      blurProgram = createProgram(gl, vertexShader, blurFragmentShader)
+      vBlurProgram = createProgram(gl, vertexShader, vBlurFragmentShader)
+      hBlurProgram = createProgram(gl, vertexShader, hBlurFragmentShader)
       mainProgram = createProgram(gl, vertexShader, mainFragmentShader)
     } catch (err) {
       console.error("Failed to initialize WebGL2 Studio shaders:", err)
@@ -104,7 +107,6 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
     let wallpaperTex: WebGLTexture | null = null
     let imgResolution: [number, number] = [1920, 1080]
 
-    // Load initial wallpaper
     wallpaperTex = loadTexture(gl, wallpaperUrl, (img) => {
       imgResolution = [img.naturalWidth || 1920, img.naturalHeight || 1080]
     })
@@ -139,11 +141,8 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
         }
 
         bgFbo = createFBO(gl, width, height)
-        // Half-resolution for blur FBOs gives buttery 60-120fps and extra soft Gaussian bloom
-        const blurW = Math.max(16, Math.round(width * 0.5))
-        const blurH = Math.max(16, Math.round(height * 0.5))
-        vBlurFbo = createFBO(gl, blurW, blurH)
-        hBlurFbo = createFBO(gl, blurW, blurH)
+        vBlurFbo = createFBO(gl, width, height)
+        hBlurFbo = createFBO(gl, width, height)
       }
     }
 
@@ -152,11 +151,11 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
 
     // Render loop
     const render = () => {
-      if (!canvas || !gl || !bgProgram || !blurProgram || !mainProgram || !quadBuffer) {
+      if (!canvas || !gl || !bgProgram || !vBlurProgram || !hBlurProgram || !mainProgram || !quadBuffer) {
         return
       }
 
-      // Spring mouse interpolation (Hooke's law with damping)
+      // Spring mouse interpolation
       const m = mouseStateRef.current
       if (m.inside) {
         const stiffness = 0.22
@@ -166,8 +165,8 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
         m.currentX += m.vx
         m.currentY += m.vy
       } else {
-        m.currentX = -2000
-        m.currentY = -2000
+        m.currentX = -3000
+        m.currentY = -3000
         m.vx = 0
         m.vy = 0
       }
@@ -196,24 +195,33 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
         gl.drawArrays(gl.TRIANGLES, 0, 6)
       }
 
+      // Compute Gaussian weights for separable blur passes
+      const blurRad = Math.max(1, Math.min(32, s.blurRadius || 2))
+      const weights = computeGaussianKernelByRadius(blurRad)
+      const fullWeights = new Float32Array(33)
+      for (let i = 0; i < weights.length; i++) {
+        fullWeights[i] = weights[i]
+      }
+
       // ==========================================
       // PASS 2: Vertical Gaussian Blur -> vBlurFbo
       // ==========================================
       if (bgFbo && vBlurFbo) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, vBlurFbo.framebuffer)
         gl.viewport(0, 0, vBlurFbo.width, vBlurFbo.height)
-        gl.useProgram(blurProgram)
+        gl.useProgram(vBlurProgram)
 
-        const posLoc = gl.getAttribLocation(blurProgram, "a_position")
+        const posLoc = gl.getAttribLocation(vBlurProgram, "a_position")
         gl.enableVertexAttribArray(posLoc)
         gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0)
 
         gl.activeTexture(gl.TEXTURE0)
         gl.bindTexture(gl.TEXTURE_2D, bgFbo.texture)
-        gl.uniform1i(gl.getUniformLocation(blurProgram, "u_image"), 0)
-        gl.uniform2f(gl.getUniformLocation(blurProgram, "u_resolution"), vBlurFbo.width, vBlurFbo.height)
-        gl.uniform2f(gl.getUniformLocation(blurProgram, "u_direction"), 0.0, 1.0)
-        gl.uniform1f(gl.getUniformLocation(blurProgram, "u_blurRadius"), Math.max(1.0, s.blurAmount * 24.0 * dpr))
+        gl.uniform1i(gl.getUniformLocation(vBlurProgram, "u_image"), 0)
+        gl.uniform2f(gl.getUniformLocation(vBlurProgram, "u_resolution"), vBlurFbo.width, vBlurFbo.height)
+        gl.uniform1i(gl.getUniformLocation(vBlurProgram, "u_blurRadius"), blurRad)
+        const vWeightsLoc = gl.getUniformLocation(vBlurProgram, "u_blurWeights[0]") || gl.getUniformLocation(vBlurProgram, "u_blurWeights")
+        gl.uniform1fv(vWeightsLoc, fullWeights)
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)
       }
@@ -224,24 +232,25 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
       if (vBlurFbo && hBlurFbo) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, hBlurFbo.framebuffer)
         gl.viewport(0, 0, hBlurFbo.width, hBlurFbo.height)
-        gl.useProgram(blurProgram)
+        gl.useProgram(hBlurProgram)
 
-        const posLoc = gl.getAttribLocation(blurProgram, "a_position")
+        const posLoc = gl.getAttribLocation(hBlurProgram, "a_position")
         gl.enableVertexAttribArray(posLoc)
         gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0)
 
         gl.activeTexture(gl.TEXTURE0)
         gl.bindTexture(gl.TEXTURE_2D, vBlurFbo.texture)
-        gl.uniform1i(gl.getUniformLocation(blurProgram, "u_image"), 0)
-        gl.uniform2f(gl.getUniformLocation(blurProgram, "u_resolution"), hBlurFbo.width, hBlurFbo.height)
-        gl.uniform2f(gl.getUniformLocation(blurProgram, "u_direction"), 1.0, 0.0)
-        gl.uniform1f(gl.getUniformLocation(blurProgram, "u_blurRadius"), Math.max(1.0, s.blurAmount * 24.0 * dpr))
+        gl.uniform1i(gl.getUniformLocation(hBlurProgram, "u_image"), 0)
+        gl.uniform2f(gl.getUniformLocation(hBlurProgram, "u_resolution"), hBlurFbo.width, hBlurFbo.height)
+        gl.uniform1i(gl.getUniformLocation(hBlurProgram, "u_blurRadius"), blurRad)
+        const hWeightsLoc = gl.getUniformLocation(hBlurProgram, "u_blurWeights[0]") || gl.getUniformLocation(hBlurProgram, "u_blurWeights")
+        gl.uniform1fv(hWeightsLoc, fullWeights)
 
         gl.drawArrays(gl.TRIANGLES, 0, 6)
       }
 
       // ==========================================
-      // PASS 4: Main Physical Shader -> Screen
+      // PASS 4: Official STEP 9 Main Pipeline -> Screen
       // ==========================================
       if (bgFbo && hBlurFbo) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null)
@@ -262,37 +271,51 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
         gl.bindTexture(gl.TEXTURE_2D, hBlurFbo.texture)
         gl.uniform1i(gl.getUniformLocation(mainProgram, "u_blurredBg"), 1)
 
-        // Screen Resolution
+        // Screen Resolution & DPR
         gl.uniform2f(gl.getUniformLocation(mainProgram, "u_resolution"), width, height)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_dpr"), dpr)
 
         // Cursor drop coordinates (WebGL origin at bottom-left)
+        const mouseX = m.targetX * dpr
+        const mouseY = height - m.targetY * dpr
         const springX = m.currentX * dpr
         const springY = height - m.currentY * dpr
-        gl.uniform2f(gl.getUniformLocation(mainProgram, "u_springMouse"), springX, springY)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_cursorRadius"), 22.0 * dpr)
+
+        gl.uniform2f(gl.getUniformLocation(mainProgram, "u_mouse"), mouseX, mouseY)
+        gl.uniform2f(gl.getUniformLocation(mainProgram, "u_mouseSpring"), springX, springY)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_cursorRadius"), 22.0)
         gl.uniform1f(gl.getUniformLocation(mainProgram, "u_cursorEnabled"), m.inside ? 1.0 : 0.0)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_mergeRate"), (s.elasticity * 60.0 + 15.0) * dpr)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_mergeRate"), s.mergeRate ?? 0.035)
 
-        // Physical Optical Parameters
-        // Mapping tuning settings to physical uniforms:
-        const refFactor = 1.0 + (s.displacementScale / 100.0) * 0.6 // 1.0 ~ 1.9
-        const refThickness = Math.max(8.0, (s.displacementScale * 0.7 + 20.0)) * dpr
-        const dispersion = (s.aberrationIntensity / 10.0) * 0.05
-        const fresnelFactor = s.overLight ? 0.35 : 0.45
-        const glareAngle = (45.0 * Math.PI) / 180.0
-        const glareConvergence = 14.0
-        const glareOpposite = 0.3
+        // Studio Official Physical Optical Parameters (matching iyinchao/liquid-glass-studio production values)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refThickness"), s.refThickness ?? 20.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refDistance"), s.refDistance ?? 0.05)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refFactor"), s.refFactor ?? 1.4)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refDispersion"), s.refDispersion ?? 7.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refFresnelRange"), 30.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refFresnelFactor"), (s.refFresnelFactor ?? 20.0) / 100.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refFresnelHardness"), 20.0 / 100.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareRange"), 30.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareConvergence"), (s.glareConvergence ?? 50.0) / 100.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareOppositeFactor"), 80.0 / 100.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareFactor"), (s.glareFactor ?? 90.0) / 100.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareHardness"), 20.0 / 100.0)
+        gl.uniform1f(
+          gl.getUniformLocation(mainProgram, "u_glareAngle"),
+          ((s.glareAngle ?? -45.0) * Math.PI) / 180.0,
+        )
+        gl.uniform1i(gl.getUniformLocation(mainProgram, "u_blurEdge"), 1)
+        gl.uniform4f(gl.getUniformLocation(mainProgram, "u_tint"), 1.0, 1.0, 1.0, 0.0)
 
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refFactor"), refFactor)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_refThickness"), refThickness)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_dispersion"), dispersion)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_fresnelFactor"), fresnelFactor)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareAngle"), glareAngle)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareConvergence"), glareConvergence)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_glareOpposite"), glareOpposite)
-        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_overLight"), s.overLight ? 1.0 : 0.0)
+        // Directional shadow
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_shadowExpand"), s.shadowExpand ?? 25.0)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_shadowFactor"), (s.shadowFactor ?? 15.0) / 100.0)
+        gl.uniform2f(gl.getUniformLocation(mainProgram, "u_shadowPosition"), 0.0, -10.0)
 
-        // Feed Registered Elements into Shader Uniforms
+        // Squircle Roundness (3.5 for Apple continuous G2 curvature)
+        gl.uniform1f(gl.getUniformLocation(mainProgram, "u_shapeRoundness"), s.shapeRoundness ?? 3.5)
+
+        // Pass registered DOM elements
         const elements = studio ? studio.getRegisteredElements() : []
         const MAX_ELEMENTS = 24
         const count = Math.min(elements.length, MAX_ELEMENTS)
@@ -308,11 +331,11 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
             const rect = el.rect
             const centerX = (rect.left + rect.width * 0.5) * dpr
             const centerY = height - (rect.top + rect.height * 0.5) * dpr
-            const halfW = (rect.width * 0.5) * dpr
-            const halfH = (rect.height * 0.5) * dpr
-            const radius = Math.min(el.radius * dpr, Math.min(halfW, halfH))
+            const widthPixels = rect.width * dpr
+            const heightPixels = rect.height * dpr
+            const radius = Math.min(el.radius * dpr, Math.min(widthPixels, heightPixels) * 0.5)
 
-            gl.uniform4f(elLoc, centerX, centerY, halfW, halfH)
+            gl.uniform4f(elLoc, centerX, centerY, widthPixels, heightPixels)
             gl.uniform1f(radLoc, radius)
             gl.uniform1f(actLoc, 1.0)
           } else {
@@ -348,7 +371,8 @@ export default function StudioCanvas({ wallpaperUrl, settings }: StudioCanvasPro
       }
       if (quadBuffer) gl.deleteBuffer(quadBuffer)
       if (bgProgram) gl.deleteProgram(bgProgram)
-      if (blurProgram) gl.deleteProgram(blurProgram)
+      if (vBlurProgram) gl.deleteProgram(vBlurProgram)
+      if (hBlurProgram) gl.deleteProgram(hBlurProgram)
       if (mainProgram) gl.deleteProgram(mainProgram)
     }
   }, [wallpaperUrl, studio])

@@ -150,3 +150,16 @@ export function loadTexture(
   image.src = url
   return texture
 }
+
+export function computeGaussianKernelByRadius(radius: number): number[] {
+  const r = Math.max(1, Math.min(32, Math.round(radius)))
+  const sigma = Math.max(0.01, r / 3.0)
+  const kernel: number[] = []
+  let sum = 0
+  for (let i = 0; i <= r; i++) {
+    const weight = Math.exp(-0.5 * (i * i) / (sigma * sigma))
+    kernel.push(weight)
+    sum += i === 0 ? weight : weight * 2
+  }
+  return kernel.map((w) => w / sum)
+}

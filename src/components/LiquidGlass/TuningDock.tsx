@@ -1,11 +1,26 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sliders, X, Sparkles, Eye, RotateCcw, Image as ImageIcon, Sun, Moon } from "lucide-react"
-import LiquidGlass from "./index"
+import { Sliders, X, Sparkles, RotateCcw, Image as ImageIcon } from "lucide-react"
 
 export interface TuningSettings {
   mode: "studio" | "standard" | "polar" | "prominent" | "shader"
+  // Studio Official Physical Optical Parameters
+  refThickness: number
+  refFactor: number
+  refDistance: number
+  refDispersion: number
+  refFresnelFactor: number
+  glareFactor: number
+  glareConvergence: number
+  glareAngle: number
+  blurRadius: number
+  mergeRate: number
+  shapeRoundness: number
+  shadowFactor: number
+  shadowExpand: number
+  wallpaperIndex: number
+  // Legacy / Fallback Parameters
   displacementScale: number
   blurAmount: number
   saturation: number
@@ -13,11 +28,26 @@ export interface TuningSettings {
   elasticity: number
   cornerRadius: number
   overLight: boolean
-  wallpaperIndex: number
 }
 
 export const DEFAULT_SETTINGS: TuningSettings = {
   mode: "studio",
+  // Studio Defaults (100% matched to liquid-glass-studio.vercel.app)
+  refThickness: 20,
+  refFactor: 1.4,
+  refDistance: 0.05,
+  refDispersion: 7.0,
+  refFresnelFactor: 20.0,
+  glareFactor: 90.0,
+  glareConvergence: 50.0,
+  glareAngle: -45.0,
+  blurRadius: 2,
+  mergeRate: 0.035,
+  shapeRoundness: 3.5,
+  shadowFactor: 15.0,
+  shadowExpand: 25.0,
+  wallpaperIndex: 0,
+  // Legacy Fallback Defaults
   displacementScale: 95,
   blurAmount: 0.25,
   saturation: 140,
@@ -25,7 +55,6 @@ export const DEFAULT_SETTINGS: TuningSettings = {
   elasticity: 0.35,
   cornerRadius: 24,
   overLight: false,
-  wallpaperIndex: 0,
 }
 
 interface TuningDockProps {
@@ -71,30 +100,32 @@ export default function TuningDock({ settings, onChange, accentColor }: TuningDo
     onChange(DEFAULT_SETTINGS)
   }
 
+  const isStudio = settings.mode === "studio"
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-auto">
       {/* Expanded Control Panel */}
       {isOpen && (
-        <div className="mb-4 w-80 sm:w-96 max-h-[80vh] overflow-y-auto rounded-3xl p-6 shadow-2xl border border-white/60 bg-white/70 backdrop-blur-2xl text-slate-900 transition-all animate-in fade-in slide-in-from-bottom-5">
+        <div className="mb-4 w-84 sm:w-96 max-h-[82vh] overflow-y-auto rounded-3xl p-6 shadow-2xl border border-white/60 bg-white/75 backdrop-blur-2xl text-slate-900 transition-all animate-in fade-in slide-in-from-bottom-5">
           {/* Header */}
           <div className="flex items-center justify-between pb-3 border-b border-slate-900/10 mb-4">
             <div className="flex items-center gap-2">
               <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white shadow-sm"
                 style={{ backgroundColor: accentColor }}
               >
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-sm font-bold tracking-tight">Liquid Glass Lab</h4>
-                <p className="text-[11px] text-slate-500 font-medium">Apple 物理光学实验室微调岛</p>
+                <h4 className="text-sm font-bold tracking-tight">Liquid Glass Studio</h4>
+                <p className="text-[11px] text-slate-500 font-medium">Apple 物理光学实验室 (STEP 9)</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={reset}
                 className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-black/5 transition-colors"
-                title="重置为默认值"
+                title="重置为 Studio 官方默认配置"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -131,31 +162,10 @@ export default function TuningDock({ settings, onChange, accentColor }: TuningDo
               </div>
             </div>
 
-            {/* OverLight Toggle */}
-            <div className="flex items-center justify-between p-2.5 rounded-2xl bg-black/5 border border-black/5">
-              <div className="flex items-center gap-2">
-                {settings.overLight ? (
-                  <Sun className="w-4 h-4 text-amber-500" />
-                ) : (
-                  <Moon className="w-4 h-4 text-indigo-500" />
-                )}
-                <div>
-                  <span className="text-xs font-bold text-slate-900 block">Over Light 浅色模式</span>
-                  <span className="text-[10px] text-slate-500 block">自适应浅色自然风景高对比度</span>
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                checked={settings.overLight}
-                onChange={(e) => update("overLight", e.target.checked)}
-                className="w-4 h-4 accent-blue-600 rounded cursor-pointer"
-              />
-            </div>
-
-            {/* Refraction Mode */}
+            {/* Mode Selector */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="font-bold text-slate-900">折射模式 (Mode)</span>
+                <span className="font-bold text-slate-900">渲染管线模式 (Engine Mode)</span>
                 <span className="font-mono text-blue-600 font-semibold uppercase">{settings.mode}</span>
               </div>
               <div className="grid grid-cols-5 gap-1">
@@ -175,107 +185,214 @@ export default function TuningDock({ settings, onChange, accentColor }: TuningDo
               </div>
             </div>
 
-            {/* Displacement Scale */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>边缘位移强度 (Displacement)</span>
-                <span className="font-mono text-blue-600 font-bold">{settings.displacementScale}</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="200"
-                step="1"
-                value={settings.displacementScale}
-                onChange={(e) => update("displacementScale", Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+            {/* Studio Official Physical Controls */}
+            {isStudio ? (
+              <>
+                {/* Refraction Factor (n) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>物理折射率 (Refractive Index / n)</span>
+                    <span className="font-mono text-blue-600 font-bold">{settings.refFactor.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1.0"
+                    max="2.5"
+                    step="0.02"
+                    value={settings.refFactor}
+                    onChange={(e) => update("refFactor", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
 
-            {/* Blur Amount */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>背景磨砂模糊 (Blur Amount)</span>
-                <span className="font-mono text-emerald-600 font-bold">{settings.blurAmount.toFixed(2)}</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.02"
-                value={settings.blurAmount}
-                onChange={(e) => update("blurAmount", Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+                {/* Lens Thickness */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>透镜厚度 (Lens Thickness)</span>
+                    <span className="font-mono text-indigo-600 font-bold">{settings.refThickness}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="5"
+                    max="60"
+                    step="1"
+                    value={settings.refThickness}
+                    onChange={(e) => update("refThickness", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
 
-            {/* Saturation */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>底层饱和度 (Saturation)</span>
-                <span className="font-mono text-purple-600 font-bold">{settings.saturation}%</span>
-              </div>
-              <input
-                type="range"
-                min="100"
-                max="300"
-                step="10"
-                value={settings.saturation}
-                onChange={(e) => update("saturation", Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+                {/* Refraction Distance */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>折射位移距离 (Refraction Distance)</span>
+                    <span className="font-mono text-purple-600 font-bold">{settings.refDistance.toFixed(3)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.0"
+                    max="0.15"
+                    step="0.005"
+                    value={settings.refDistance}
+                    onChange={(e) => update("refDistance", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
 
-            {/* Chromatic Aberration */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>色散强度 (Chromatic Aberration)</span>
-                <span className="font-mono text-cyan-600 font-bold">{settings.aberrationIntensity}</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="20"
-                step="0.5"
-                value={settings.aberrationIntensity}
-                onChange={(e) => update("aberrationIntensity", Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+                {/* RGB Dispersion */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>RGB 物理色散 (Dispersion)</span>
+                    <span className="font-mono text-cyan-600 font-bold">{settings.refDispersion.toFixed(1)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="30"
+                    step="0.5"
+                    value={settings.refDispersion}
+                    onChange={(e) => update("refDispersion", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
 
-            {/* Elasticity */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>物理光标弹性 (Elasticity)</span>
-                <span className="font-mono text-amber-600 font-bold">{settings.elasticity.toFixed(2)}</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={settings.elasticity}
-                onChange={(e) => update("elasticity", Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+                {/* Glare Angle */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>定向高光入射角 (Glare Angle)</span>
+                    <span className="font-mono text-amber-600 font-bold">{settings.glareAngle}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="-180"
+                    max="180"
+                    step="5"
+                    value={settings.glareAngle}
+                    onChange={(e) => update("glareAngle", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
 
-            {/* Corner Radius */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span>圆角曲率 (Corner Radius)</span>
-                <span className="font-mono text-pink-600 font-bold">{settings.cornerRadius}px</span>
-              </div>
-              <input
-                type="range"
-                min="8"
-                max="60"
-                step="2"
-                value={settings.cornerRadius}
-                onChange={(e) => update("cornerRadius", Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+                {/* Glare Convergence */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>高光聚焦度 (Glare Convergence)</span>
+                    <span className="font-mono text-orange-600 font-bold">{settings.glareConvergence}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="100"
+                    step="2"
+                    value={settings.glareConvergence}
+                    onChange={(e) => update("glareConvergence", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Fresnel Factor */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>菲涅尔反光强度 (Fresnel Factor)</span>
+                    <span className="font-mono text-pink-600 font-bold">{settings.refFresnelFactor}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="50"
+                    step="1"
+                    value={settings.refFresnelFactor}
+                    onChange={(e) => update("refFresnelFactor", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Blur Radius */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>高斯磨砂半径 (Blur Radius)</span>
+                    <span className="font-mono text-emerald-600 font-bold">{settings.blurRadius}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="16"
+                    step="1"
+                    value={settings.blurRadius}
+                    onChange={(e) => update("blurRadius", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Merge Rate (smin) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>光标水滴融合度 (Blob Merge Rate)</span>
+                    <span className="font-mono text-teal-600 font-bold">{settings.mergeRate.toFixed(3)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.01"
+                    max="0.08"
+                    step="0.005"
+                    value={settings.mergeRate}
+                    onChange={(e) => update("mergeRate", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Squircle Roundness */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>Apple G2 连续圆角曲率 (Squircle)</span>
+                    <span className="font-mono text-rose-600 font-bold">{settings.shapeRoundness.toFixed(1)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="2.0"
+                    max="6.0"
+                    step="0.2"
+                    value={settings.shapeRoundness}
+                    onChange={(e) => update("shapeRoundness", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+              </>
+            ) : (
+              /* Fallback SVG Controls */
+              <>
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>SVG 边缘位移 (Displacement)</span>
+                    <span className="font-mono text-blue-600 font-bold">{settings.displacementScale}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="200"
+                    step="1"
+                    value={settings.displacementScale}
+                    onChange={(e) => update("displacementScale", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <span>CSS 磨砂模糊 (Blur Amount)</span>
+                    <span className="font-mono text-emerald-600 font-bold">{settings.blurAmount.toFixed(2)}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.02"
+                    value={settings.blurAmount}
+                    onChange={(e) => update("blurAmount", Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -283,7 +400,7 @@ export default function TuningDock({ settings, onChange, accentColor }: TuningDo
       {/* Floating Pill Trigger Button */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="group flex items-center gap-2 px-4 py-2.5 rounded-full shadow-2xl border border-white/70 bg-white/75 hover:bg-white/90 backdrop-blur-xl text-slate-900 transition-all active:scale-95 font-semibold text-xs"
+        className="group flex items-center gap-2 px-4 py-2.5 rounded-full shadow-2xl border border-white/70 bg-white/80 hover:bg-white/95 backdrop-blur-xl text-slate-900 transition-all active:scale-95 font-semibold text-xs"
         style={{
           boxShadow: "0 15px 35px -5px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8) inset",
         }}

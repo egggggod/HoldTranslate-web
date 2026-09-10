@@ -280,125 +280,132 @@ const GlassContainer = forwardRef<
             overflow: "hidden",
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
             backgroundColor: isStudioActive
-              ? overLight
-                ? "rgba(0, 0, 0, 0.04)"
-                : "rgba(255, 255, 255, 0.03)"
+              ? "transparent"
               : overLight
                 ? "rgba(0, 0, 0, 0.24)"
                 : `rgba(255, 255, 255, ${0.05 + blurAmount * 0.05})`,
             boxShadow: isStudioActive
-              ? "inset 0 1px 1.5px rgba(255, 255, 255, 0.3), inset 0 0 16px rgba(255, 255, 255, 0.05)"
+              ? "none"
               : overLight
                 ? "0px 16px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 16px rgba(255, 255, 255, 0.05)"
                 : "0px 14px 44px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.08)",
           }}
         >
           {/* backdrop refraction layer */}
-          <span
-            className="glass__warp pointer-events-none"
-            style={
-              {
-                ...backdropStyle,
-                position: "absolute",
-                inset: "0",
-              } as CSSProperties
-            }
-          />
+          {!isStudioActive && (
+            <span
+              className="glass__warp pointer-events-none"
+              style={
+                {
+                  ...backdropStyle,
+                  position: "absolute",
+                  inset: "0",
+                } as CSSProperties
+              }
+            />
+          )}
 
           {/* User Content */}
           <div
             className="relative z-10 w-full transition-colors duration-200 text-white"
             style={{
-              textShadow: overLight
-                ? "0px 2px 12px rgba(0, 0, 0, 0)"
-                : "0px 2px 12px rgba(0, 0, 0, 0.4)",
+              textShadow: isStudioActive
+                ? "0px 1px 8px rgba(0, 0, 0, 0.35)"
+                : overLight
+                  ? "0px 2px 12px rgba(0, 0, 0, 0)"
+                  : "0px 2px 12px rgba(0, 0, 0, 0.4)",
             }}
           >
             {children}
           </div>
         </div>
 
-        {/* Border layer 1 - Screen blend mode highlight (outside overflow:hidden so rim shadow is unclipped) */}
-        <span
-          className="pointer-events-none absolute inset-0 transition-opacity duration-200"
-          style={{
-            borderRadius: `${cornerRadius}px`,
-            padding: "1.5px",
-            mixBlendMode: "screen",
-            opacity: 0.2,
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-            boxShadow:
-              "0 0 0 0.5px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(255, 255, 255, 0.25) inset, 0 1px 4px rgba(0, 0, 0, 0.35)",
-            background: `linear-gradient(
-              ${135 + mouseX * 1.2}deg,
-              rgba(255, 255, 255, 0.0) 0%,
-              rgba(255, 255, 255, ${0.12 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
-              rgba(255, 255, 255, ${0.4 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
-              rgba(255, 255, 255, 0.0) 100%
-            )`,
-          }}
-        />
-
-        {/* Border layer 2 - Overlay blend mode highlight (outside overflow:hidden so rim shadow is unclipped) */}
-        <span
-          className="pointer-events-none absolute inset-0 transition-opacity duration-200"
-          style={{
-            borderRadius: `${cornerRadius}px`,
-            padding: "1.5px",
-            mixBlendMode: "overlay",
-            opacity: 1,
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-            boxShadow:
-              "0 0 0 0.5px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(255, 255, 255, 0.25) inset, 0 1px 4px rgba(0, 0, 0, 0.35)",
-            background: `linear-gradient(
-              ${135 + mouseX * 1.2}deg,
-              rgba(255, 255, 255, 0.0) 0%,
-              rgba(255, 255, 255, ${0.32 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
-              rgba(255, 255, 255, ${0.6 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
-              rgba(255, 255, 255, 0.0) 100%
-            )`,
-          }}
-        />
-
-        {/* Hover Specular Light Sheen (3 layers from original repo) */}
-        {Boolean(onClick) && (
+        {/* Fallback CSS Border Layers & Specular Sheen (Only active when not in Studio WebGL2 mode) */}
+        {!isStudioActive && (
           <>
-            <div
-              className="pointer-events-none absolute inset-0 transition-all duration-200"
+            {/* Border layer 1 - Screen blend mode highlight */}
+            <span
+              className="pointer-events-none absolute inset-0 transition-opacity duration-200"
               style={{
                 borderRadius: `${cornerRadius}px`,
-                opacity: isHovered || active ? 0.5 : 0,
-                backgroundImage:
-                  "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 50%)",
-                mixBlendMode: "overlay",
+                padding: "1.5px",
+                mixBlendMode: "screen",
+                opacity: 0.2,
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow:
+                  "0 0 0 0.5px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(255, 255, 255, 0.25) inset, 0 1px 4px rgba(0, 0, 0, 0.35)",
+                background: `linear-gradient(
+                  ${135 + mouseX * 1.2}deg,
+                  rgba(255, 255, 255, 0.0) 0%,
+                  rgba(255, 255, 255, ${0.12 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
+                  rgba(255, 255, 255, ${0.4 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
+                  rgba(255, 255, 255, 0.0) 100%
+                )`,
               }}
             />
-            <div
-              className="pointer-events-none absolute inset-0 transition-all duration-200"
+
+            {/* Border layer 2 - Overlay blend mode highlight */}
+            <span
+              className="pointer-events-none absolute inset-0 transition-opacity duration-200"
               style={{
                 borderRadius: `${cornerRadius}px`,
-                opacity: active ? 0.5 : 0,
-                backgroundImage:
-                  "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 80%)",
+                padding: "1.5px",
                 mixBlendMode: "overlay",
+                opacity: 1,
+                WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                WebkitMaskComposite: "xor",
+                maskComposite: "exclude",
+                boxShadow:
+                  "0 0 0 0.5px rgba(255, 255, 255, 0.5) inset, 0 1px 3px rgba(255, 255, 255, 0.25) inset, 0 1px 4px rgba(0, 0, 0, 0.35)",
+                background: `linear-gradient(
+                  ${135 + mouseX * 1.2}deg,
+                  rgba(255, 255, 255, 0.0) 0%,
+                  rgba(255, 255, 255, ${0.32 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
+                  rgba(255, 255, 255, ${0.6 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
+                  rgba(255, 255, 255, 0.0) 100%
+                )`,
               }}
             />
-            <div
-              className="pointer-events-none absolute inset-0 transition-all duration-200"
-              style={{
-                borderRadius: `${cornerRadius}px`,
-                opacity: isHovered ? 0.4 : active ? 0.8 : 0,
-                backgroundImage: `radial-gradient(circle at ${50 + mouseX * 0.5}% ${Math.max(
-                  0,
-                  30 + mouseY * 0.5,
-                )}%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%)`,
-                mixBlendMode: "overlay",
-              }}
-            />
+
+            {/* Hover Specular Light Sheen */}
+            {Boolean(onClick) && (
+              <>
+                <div
+                  className="pointer-events-none absolute inset-0 transition-all duration-200"
+                  style={{
+                    borderRadius: `${cornerRadius}px`,
+                    opacity: isHovered || active ? 0.5 : 0,
+                    backgroundImage:
+                      "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 50%)",
+                    mixBlendMode: "overlay",
+                  }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 transition-all duration-200"
+                  style={{
+                    borderRadius: `${cornerRadius}px`,
+                    opacity: active ? 0.5 : 0,
+                    backgroundImage:
+                      "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 80%)",
+                    mixBlendMode: "overlay",
+                  }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 transition-all duration-200"
+                  style={{
+                    borderRadius: `${cornerRadius}px`,
+                    opacity: isHovered ? 0.4 : active ? 0.8 : 0,
+                    backgroundImage: `radial-gradient(circle at ${50 + mouseX * 0.5}% ${Math.max(
+                      0,
+                      30 + mouseY * 0.5,
+                    )}%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%)`,
+                    mixBlendMode: "overlay",
+                  }}
+                />
+              </>
+            )}
           </>
         )}
       </div>
