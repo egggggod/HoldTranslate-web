@@ -46,7 +46,7 @@ const GlassFilter: React.FC<{
   mode: "standard" | "polar" | "prominent" | "shader"
   shaderMapUrl?: string
 }> = ({ id, displacementScale, aberrationIntensity, width, height, mode, shaderMapUrl }) => (
-  <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+  <svg style={{ position: "absolute", width, height }} aria-hidden="true">
     <defs>
       <radialGradient id={`${id}-edge-mask`} cx="50%" cy="50%" r="50%">
         <stop offset="0%" stopColor="black" stopOpacity="0" />
@@ -222,8 +222,8 @@ const GlassContainer = forwardRef<
 
     const backdropStyle = {
       filter: isFirefox ? undefined : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 16 : 6) + blurAmount * 36}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 16 : 6) + blurAmount * 36}px) saturate(${saturation}%)`,
+      backdropFilter: `blur(${(overLight ? 16 : 8) + blurAmount * 36}px) saturate(${saturation}%)`,
+      WebkitBackdropFilter: `blur(${(overLight ? 16 : 8) + blurAmount * 36}px) saturate(${saturation}%)`,
     }
 
     const mouseX = mouseOffset?.x || 0
@@ -268,10 +268,10 @@ const GlassContainer = forwardRef<
             padding,
             overflow: "hidden",
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-            backgroundColor: isHovered ? "rgba(255, 255, 255, 0.03)" : "transparent",
-            boxShadow: isHovered
-              ? "0 16px 44px -8px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.45) inset"
-              : "0 10px 30px -6px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.3) inset",
+            backgroundColor: "transparent",
+            boxShadow: overLight
+              ? "0px 16px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.2) inset"
+              : "0px 12px 40px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.18) inset",
           }}
         >
           {/* backdrop refraction layer */}
@@ -286,6 +286,17 @@ const GlassContainer = forwardRef<
             }
           />
 
+          {/* Frosted mist diffusion layer - creates Apple-grade hazy translucency without turning black */}
+          <span
+            className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+            style={{
+              borderRadius: `${cornerRadius}px`,
+              backgroundColor: isHovered
+                ? "rgba(255, 255, 255, 0.11)"
+                : "rgba(255, 255, 255, 0.07)",
+            }}
+          />
+
           {/* Border layer 1 - Screen blend mode highlight */}
           <span
             className="pointer-events-none absolute inset-0 transition-opacity duration-200"
@@ -293,7 +304,7 @@ const GlassContainer = forwardRef<
               borderRadius: `${cornerRadius}px`,
               padding: "1.5px",
               mixBlendMode: "screen",
-              opacity: 0.25,
+              opacity: 0.2,
               WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
@@ -316,7 +327,7 @@ const GlassContainer = forwardRef<
               borderRadius: `${cornerRadius}px`,
               padding: "1.5px",
               mixBlendMode: "overlay",
-              opacity: 0.35,
+              opacity: 1,
               WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
               WebkitMaskComposite: "xor",
               maskComposite: "exclude",
@@ -325,33 +336,58 @@ const GlassContainer = forwardRef<
               background: `linear-gradient(
                 ${135 + mouseX * 1.2}deg,
                 rgba(255, 255, 255, 0.0) 0%,
-                rgba(255, 255, 255, ${0.12 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
-                rgba(255, 255, 255, ${0.4 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
+                rgba(255, 255, 255, ${0.32 + Math.abs(mouseX) * 0.008}) ${Math.max(10, 33 + mouseY * 0.3)}%,
+                rgba(255, 255, 255, ${0.6 + Math.abs(mouseX) * 0.012}) ${Math.min(90, 66 + mouseY * 0.4)}%,
                 rgba(255, 255, 255, 0.0) 100%
               )`,
             }}
           />
 
-          {/* Hover Specular Light Sheen */}
+          {/* Hover Specular Light Sheen (3 layers from original repo) */}
           {Boolean(onClick) && (
-            <div
-              className="pointer-events-none absolute inset-0 transition-opacity duration-300"
-              style={{
-                borderRadius: `${cornerRadius}px`,
-                opacity: isHovered ? 0.45 : 0,
-                background: `radial-gradient(circle at ${50 + mouseX * 0.5}% ${
-                  30 + mouseY * 0.5
-                }%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 65%)`,
-                mixBlendMode: "overlay",
-              }}
-            />
+            <>
+              <div
+                className="pointer-events-none absolute inset-0 transition-all duration-200"
+                style={{
+                  borderRadius: `${cornerRadius}px`,
+                  opacity: isHovered || active ? 0.5 : 0,
+                  backgroundImage:
+                    "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 50%)",
+                  mixBlendMode: "overlay",
+                }}
+              />
+              <div
+                className="pointer-events-none absolute inset-0 transition-all duration-200"
+                style={{
+                  borderRadius: `${cornerRadius}px`,
+                  opacity: active ? 0.5 : 0,
+                  backgroundImage:
+                    "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 80%)",
+                  mixBlendMode: "overlay",
+                }}
+              />
+              <div
+                className="pointer-events-none absolute inset-0 transition-all duration-200"
+                style={{
+                  borderRadius: `${cornerRadius}px`,
+                  opacity: isHovered ? 0.4 : active ? 0.8 : 0,
+                  backgroundImage: `radial-gradient(circle at ${50 + mouseX * 0.5}% ${Math.max(
+                    0,
+                    30 + mouseY * 0.5,
+                  )}%, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%)`,
+                  mixBlendMode: "overlay",
+                }}
+              />
+            </>
           )}
 
           {/* User Content */}
           <div
             className="relative z-10 w-full transition-colors duration-200 text-white"
             style={{
-              textShadow: "0px 2px 12px rgba(0, 0, 0, 0.65)",
+              textShadow: overLight
+                ? "0px 2px 12px rgba(0, 0, 0, 0.2)"
+                : "0px 2px 12px rgba(0, 0, 0, 0.5)",
             }}
           >
             {children}
@@ -386,9 +422,9 @@ export interface LiquidGlassProps {
 export default function LiquidGlass({
   children,
   displacementScale = 70,
-  blurAmount = 0.15,
-  saturation = 150,
-  aberrationIntensity = 2.5,
+  blurAmount = 0.45,
+  saturation = 140,
+  aberrationIntensity = 2,
   elasticity = 0.2,
   cornerRadius = 24,
   globalMousePos: externalGlobalMousePos,
@@ -396,7 +432,7 @@ export default function LiquidGlass({
   mouseContainer = null,
   className = "",
   padding = "16px 24px",
-  overLight = true,
+  overLight = false,
   style = {},
   mode = "standard",
   onClick,
