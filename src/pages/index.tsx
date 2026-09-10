@@ -75,7 +75,12 @@ export default function Home() {
           <img
             src={activeWallpaper}
             alt="Scenic Background"
-            className="w-full h-full object-cover object-center transition-all duration-700 scale-105 filter brightness-[1.03] contrast-[1.04]"
+            className="w-full h-full object-cover transition-all duration-700 filter brightness-[1.03] contrast-[1.04]"
+            style={{
+              objectPosition: "center 40%",
+              transform: "scale(2.05)",
+              transformOrigin: "center 14%",
+            }}
           />
           {/* Subtle contrast overlay for optimal optical glass refraction */}
           <div
