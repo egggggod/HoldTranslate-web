@@ -22,7 +22,7 @@ export default function Navbar({ lang, onToggleLang, dict, accentColor, settings
       <div ref={navContainerRef} className="pointer-events-auto">
         <LiquidGlass
           mode={settings.mode}
-          displacementScale={settings.displacementScale * 0.5}
+          displacementScale={settings.displacementScale * 0.75}
           blurAmount={settings.blurAmount}
           saturation={settings.saturation}
           aberrationIntensity={settings.aberrationIntensity}

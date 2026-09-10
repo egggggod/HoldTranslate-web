@@ -88,7 +88,7 @@ export default function FeatureGrid({ dict, accentColor, settings }: FeatureGrid
             <LiquidGlass
               key={i}
               mode={settings.mode}
-              displacementScale={settings.displacementScale * 0.65}
+              displacementScale={settings.displacementScale * 0.85}
               blurAmount={settings.blurAmount}
               saturation={settings.saturation}
               aberrationIntensity={settings.aberrationIntensity}

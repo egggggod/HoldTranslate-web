@@ -18,10 +18,10 @@ export interface TuningSettings {
 
 export const DEFAULT_SETTINGS: TuningSettings = {
   mode: "standard",
-  displacementScale: 70,
-  blurAmount: 0.45,
+  displacementScale: 95,
+  blurAmount: 0.2,
   saturation: 140,
-  aberrationIntensity: 2,
+  aberrationIntensity: 2.5,
   elasticity: 0.2,
   cornerRadius: 24,
   overLight: false,

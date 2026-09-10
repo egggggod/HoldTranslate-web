@@ -77,9 +77,9 @@ export default function Home() {
             alt="Scenic Background"
             className="w-full h-full object-cover transition-all duration-700 filter brightness-[1.03] contrast-[1.04]"
             style={{
-              objectPosition: "center 40%",
-              transform: "scale(2.05)",
-              transformOrigin: "center 14%",
+              objectPosition: "center 56%",
+              transform: "scale(1.18)",
+              transformOrigin: "center center",
             }}
           />
           {/* Subtle contrast overlay for optimal optical glass refraction */}

@@ -86,7 +86,7 @@ export default function Hero({ dict, accentColor, settings }: HeroProps) {
 
           <LiquidGlass
             mode={settings.mode}
-            displacementScale={settings.displacementScale * 0.8}
+            displacementScale={settings.displacementScale * 0.95}
             blurAmount={settings.blurAmount}
             saturation={settings.saturation}
             aberrationIntensity={settings.aberrationIntensity}
@@ -111,7 +111,7 @@ export default function Hero({ dict, accentColor, settings }: HeroProps) {
         <div className="flex flex-wrap items-center justify-center gap-3.5">
           <LiquidGlass
             mode={settings.mode}
-            displacementScale={settings.displacementScale * 0.4}
+            displacementScale={settings.displacementScale * 0.75}
             blurAmount={settings.blurAmount}
             saturation={settings.saturation}
             aberrationIntensity={settings.aberrationIntensity}

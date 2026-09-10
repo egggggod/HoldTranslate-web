@@ -46,7 +46,7 @@ const GlassFilter: React.FC<{
   mode: "standard" | "polar" | "prominent" | "shader"
   shaderMapUrl?: string
 }> = ({ id, displacementScale, aberrationIntensity, width, height, mode, shaderMapUrl }) => (
-  <svg style={{ position: "absolute", width, height }} aria-hidden="true">
+  <svg style={{ position: "absolute", width: "100%", height: "100%", pointerEvents: "none" }} aria-hidden="true">
     <defs>
       <radialGradient id={`${id}-edge-mask`} cx="50%" cy="50%" r="50%">
         <stop offset="0%" stopColor="black" stopOpacity="0" />
@@ -202,15 +202,28 @@ const GlassContainer = forwardRef<
     },
     ref,
   ) => {
+    const rawId = useId()
+    const filterId = "glass-filter-" + rawId.replace(/[^a-zA-Z0-9_-]/g, "")
+    const [shaderMapUrl, setShaderMapUrl] = useState<string>("")
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
       setMounted(true)
     }, [])
 
+    const isFirefox = mounted && typeof navigator !== "undefined" && navigator.userAgent.toLowerCase().includes("firefox")
+
+    useEffect(() => {
+      if (mode === "shader" && glassSize.width > 0 && glassSize.height > 0) {
+        const url = generateShaderDisplacementMap(glassSize.width, glassSize.height)
+        setShaderMapUrl(url)
+      }
+    }, [mode, glassSize.width, glassSize.height])
+
     const backdropStyle = {
-      backdropFilter: `blur(${(overLight ? 20 : 12) + blurAmount * 44}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 20 : 12) + blurAmount * 44}px) saturate(${saturation}%)`,
+      filter: isFirefox ? undefined : `url(#${filterId})`,
+      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
+      WebkitBackdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
     }
 
     const mouseX = mouseOffset?.x || 0
@@ -233,6 +246,16 @@ const GlassContainer = forwardRef<
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
       >
+        <GlassFilter
+          mode={mode}
+          id={filterId}
+          displacementScale={displacementScale}
+          aberrationIntensity={aberrationIntensity}
+          width={glassSize.width}
+          height={glassSize.height}
+          shaderMapUrl={shaderMapUrl}
+        />
+
         <div
           className="glass-inner"
           style={{
@@ -247,7 +270,7 @@ const GlassContainer = forwardRef<
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
             backgroundColor: overLight
               ? "rgba(0, 0, 0, 0.24)"
-              : `rgba(255, 255, 255, ${0.08 + blurAmount * 0.08})`,
+              : `rgba(255, 255, 255, ${0.05 + blurAmount * 0.05})`,
             boxShadow: overLight
               ? "0px 16px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 16px rgba(255, 255, 255, 0.05)"
               : "0px 14px 44px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.08)",

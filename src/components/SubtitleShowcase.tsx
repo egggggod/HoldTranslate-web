@@ -102,7 +102,7 @@ export default function SubtitleShowcase({ dict, accentColor, settings }: Subtit
       {/* Showcase Display as LiquidGlass Card */}
       <LiquidGlass
         mode={settings.mode}
-        displacementScale={settings.displacementScale * 0.7}
+        displacementScale={settings.displacementScale * 0.85}
         blurAmount={settings.blurAmount}
         saturation={settings.saturation}
         aberrationIntensity={settings.aberrationIntensity}
