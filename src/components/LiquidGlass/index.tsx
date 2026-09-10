@@ -3,6 +3,7 @@
 import React, { type CSSProperties, forwardRef, useCallback, useEffect, useId, useRef, useState } from "react"
 import { ShaderDisplacementGenerator, fragmentShaders } from "./shader-utils"
 import { displacementMap, polarDisplacementMap, prominentDisplacementMap } from "./utils"
+import { useStudio, useStudioElement } from "../LiquidGlassStudio/StudioContext"
 
 // Generate shader-based displacement map using shaderUtils
 const generateShaderDisplacementMap = (width: number, height: number): string => {
@@ -21,9 +22,10 @@ const generateShaderDisplacementMap = (width: number, height: number): string =>
   }
 }
 
-const getMap = (mode: "standard" | "polar" | "prominent" | "shader", shaderMapUrl?: string) => {
+const getMap = (mode: "studio" | "standard" | "polar" | "prominent" | "shader", shaderMapUrl?: string) => {
   switch (mode) {
     case "standard":
+    case "studio":
       return displacementMap
     case "polar":
       return polarDisplacementMap
@@ -43,7 +45,7 @@ const GlassFilter: React.FC<{
   aberrationIntensity: number
   width: number
   height: number
-  mode: "standard" | "polar" | "prominent" | "shader"
+  mode: "studio" | "standard" | "polar" | "prominent" | "shader"
   shaderMapUrl?: string
 }> = ({ id, displacementScale, aberrationIntensity, width, height, mode, shaderMapUrl }) => (
   <svg style={{ position: "absolute", width: "100%", height: "100%", pointerEvents: "none" }} aria-hidden="true">
@@ -173,8 +175,9 @@ const GlassContainer = forwardRef<
     padding?: string
     glassSize?: { width: number; height: number }
     onClick?: () => void
-    mode?: "standard" | "polar" | "prominent" | "shader"
+    mode?: "studio" | "standard" | "polar" | "prominent" | "shader"
     isHovered?: boolean
+    isStudioActive?: boolean
   }>
 >(
   (
@@ -198,6 +201,7 @@ const GlassContainer = forwardRef<
       onClick,
       mode = "standard",
       isHovered = false,
+      isStudioActive = false,
       mouseOffset,
     },
     ref,
@@ -220,11 +224,16 @@ const GlassContainer = forwardRef<
       }
     }, [mode, glassSize.width, glassSize.height])
 
-    const backdropStyle = {
-      filter: isFirefox ? undefined : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
-    }
+    const backdropStyle = isStudioActive
+      ? {
+          backdropFilter: "none",
+          WebkitBackdropFilter: "none",
+        }
+      : {
+          filter: isFirefox ? undefined : `url(#${filterId})`,
+          backdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
+          WebkitBackdropFilter: `blur(${(overLight ? 12 : 4) + blurAmount * 32}px) saturate(${saturation}%)`,
+        }
 
     const mouseX = mouseOffset?.x || 0
     const mouseY = mouseOffset?.y || 0
@@ -246,15 +255,17 @@ const GlassContainer = forwardRef<
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
       >
-        <GlassFilter
-          mode={mode}
-          id={filterId}
-          displacementScale={displacementScale}
-          aberrationIntensity={aberrationIntensity}
-          width={glassSize.width}
-          height={glassSize.height}
-          shaderMapUrl={shaderMapUrl}
-        />
+        {!isStudioActive && (
+          <GlassFilter
+            mode={mode}
+            id={filterId}
+            displacementScale={displacementScale}
+            aberrationIntensity={aberrationIntensity}
+            width={glassSize.width}
+            height={glassSize.height}
+            shaderMapUrl={shaderMapUrl}
+          />
+        )}
 
         <div
           className="glass-inner"
@@ -268,12 +279,18 @@ const GlassContainer = forwardRef<
             padding,
             overflow: "hidden",
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-            backgroundColor: overLight
-              ? "rgba(0, 0, 0, 0.24)"
-              : `rgba(255, 255, 255, ${0.05 + blurAmount * 0.05})`,
-            boxShadow: overLight
-              ? "0px 16px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 16px rgba(255, 255, 255, 0.05)"
-              : "0px 14px 44px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.08)",
+            backgroundColor: isStudioActive
+              ? overLight
+                ? "rgba(0, 0, 0, 0.04)"
+                : "rgba(255, 255, 255, 0.03)"
+              : overLight
+                ? "rgba(0, 0, 0, 0.24)"
+                : `rgba(255, 255, 255, ${0.05 + blurAmount * 0.05})`,
+            boxShadow: isStudioActive
+              ? "inset 0 1px 1.5px rgba(255, 255, 255, 0.3), inset 0 0 16px rgba(255, 255, 255, 0.05)"
+              : overLight
+                ? "0px 16px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 16px rgba(255, 255, 255, 0.05)"
+                : "0px 14px 44px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.08)",
           }}
         >
           {/* backdrop refraction layer */}
@@ -406,7 +423,7 @@ export interface LiquidGlassProps {
   padding?: string
   style?: React.CSSProperties
   overLight?: boolean
-  mode?: "standard" | "polar" | "prominent" | "shader"
+  mode?: "studio" | "standard" | "polar" | "prominent" | "shader"
   onClick?: () => void
 }
 
@@ -429,6 +446,12 @@ export default function LiquidGlass({
   onClick,
 }: LiquidGlassProps) {
   const glassRef = useRef<HTMLDivElement>(null)
+  const studioId = useId()
+  const studio = useStudio()
+  const isStudioActive = Boolean(studio?.isStudioEnabled) && (mode === "studio" || mode === "standard")
+
+  useStudioElement(studioId, glassRef, cornerRadius, isStudioActive)
+
   const [isHovered, setIsHovered] = useState(false)
   const [isActive, setIsActive] = useState(false)
   const [glassSize, setGlassSize] = useState({ width: 270, height: 69 })
@@ -548,6 +571,7 @@ export default function LiquidGlass({
       onClick={onClick}
       mode={mode}
       isHovered={isHovered}
+      isStudioActive={isStudioActive}
     >
       {children}
     </GlassContainer>

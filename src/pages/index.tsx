@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import Head from "next/head"
+import dynamic from "next/dynamic"
 import Navbar from "@/components/Navbar"
 import Hero from "@/components/Hero"
 import InteractiveDemo from "@/components/InteractiveDemo"
@@ -10,8 +11,13 @@ import SubtitleShowcase from "@/components/SubtitleShowcase"
 import QuickInstall from "@/components/QuickInstall"
 import Footer from "@/components/Footer"
 import TuningDock, { DEFAULT_SETTINGS, WALLPAPERS, type TuningSettings } from "@/components/LiquidGlass/TuningDock"
+import { StudioProvider } from "@/components/LiquidGlassStudio/StudioContext"
 import { en } from "@/locales/en"
 import { zh } from "@/locales/zh"
+
+const StudioCanvas = dynamic(() => import("@/components/LiquidGlassStudio/StudioCanvas"), {
+  ssr: false,
+})
 
 export default function Home() {
   const [lang, setLang] = useState<"en" | "zh">("zh")
@@ -41,7 +47,7 @@ export default function Home() {
   const activeWallpaper = WALLPAPERS[settings.wallpaperIndex]?.url || WALLPAPERS[0].url
 
   return (
-    <>
+    <StudioProvider>
       <Head>
         <title>{pageTitle}</title>
         <meta
@@ -70,8 +76,17 @@ export default function Home() {
           } as React.CSSProperties
         }
       >
-        {/* High-Resolution Scenic Landscape Background */}
-        <div className="fixed inset-0 pointer-events-none -z-20 overflow-hidden">
+        {/* Fullscreen WebGL2 Liquid Glass Studio Renderer */}
+        {settings.mode === "studio" && (
+          <StudioCanvas wallpaperUrl={activeWallpaper} settings={settings} />
+        )}
+
+        {/* High-Resolution Scenic Landscape Background (shown in fallback/non-studio modes) */}
+        <div
+          className={`fixed inset-0 pointer-events-none -z-20 overflow-hidden transition-opacity duration-700 ${
+            settings.mode === "studio" ? "opacity-0" : "opacity-100"
+          }`}
+        >
           <img
             src={activeWallpaper}
             alt="Scenic Background"
@@ -88,7 +103,6 @@ export default function Home() {
               settings.overLight ? "bg-black/15" : "bg-transparent"
             }`}
           />
-          {/* High contrast pure wallpaper layer for authentic specular glass refraction */}
         </div>
 
         {/* Top Floating Island Navbar */}
@@ -137,6 +151,6 @@ export default function Home() {
           accentColor={accentColor}
         />
       </div>
-    </>
+    </StudioProvider>
   )
 }

@@ -5,7 +5,7 @@ import { Sliders, X, Sparkles, Eye, RotateCcw, Image as ImageIcon, Sun, Moon } f
 import LiquidGlass from "./index"
 
 export interface TuningSettings {
-  mode: "standard" | "polar" | "prominent" | "shader"
+  mode: "studio" | "standard" | "polar" | "prominent" | "shader"
   displacementScale: number
   blurAmount: number
   saturation: number
@@ -17,12 +17,12 @@ export interface TuningSettings {
 }
 
 export const DEFAULT_SETTINGS: TuningSettings = {
-  mode: "standard",
+  mode: "studio",
   displacementScale: 95,
-  blurAmount: 0.2,
+  blurAmount: 0.25,
   saturation: 140,
   aberrationIntensity: 2.5,
-  elasticity: 0.2,
+  elasticity: 0.35,
   cornerRadius: 24,
   overLight: false,
   wallpaperIndex: 0,
@@ -158,18 +158,18 @@ export default function TuningDock({ settings, onChange, accentColor }: TuningDo
                 <span className="font-bold text-slate-900">折射模式 (Mode)</span>
                 <span className="font-mono text-blue-600 font-semibold uppercase">{settings.mode}</span>
               </div>
-              <div className="grid grid-cols-4 gap-1">
-                {(["standard", "polar", "prominent", "shader"] as const).map((m) => (
+              <div className="grid grid-cols-5 gap-1">
+                {(["studio", "standard", "polar", "prominent", "shader"] as const).map((m) => (
                   <button
                     key={m}
                     onClick={() => update("mode", m)}
-                    className={`py-1 rounded-lg text-[11px] capitalize transition-all ${
+                    className={`py-1 rounded-lg text-[10px] capitalize transition-all ${
                       settings.mode === m
                         ? "bg-blue-600 text-white font-semibold shadow"
                         : "bg-black/5 text-slate-700 hover:bg-black/10"
                     }`}
                   >
-                    {m}
+                    {m === "studio" ? "Studio ⚡" : m}
                   </button>
                 ))}
               </div>
