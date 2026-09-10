@@ -202,28 +202,15 @@ const GlassContainer = forwardRef<
     },
     ref,
   ) => {
-    const rawId = useId()
-    const filterId = "glass-filter-" + rawId.replace(/:/g, "")
-    const [shaderMapUrl, setShaderMapUrl] = useState<string>("")
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
       setMounted(true)
     }, [])
 
-    const isFirefox = mounted && typeof navigator !== "undefined" && navigator.userAgent.toLowerCase().includes("firefox")
-
-    useEffect(() => {
-      if (mode === "shader" && glassSize.width > 0 && glassSize.height > 0) {
-        const url = generateShaderDisplacementMap(glassSize.width, glassSize.height)
-        setShaderMapUrl(url)
-      }
-    }, [mode, glassSize.width, glassSize.height])
-
     const backdropStyle = {
-      filter: isFirefox ? undefined : `url(#${filterId})`,
-      backdropFilter: `blur(${(overLight ? 16 : 8) + blurAmount * 36}px) saturate(${saturation}%)`,
-      WebkitBackdropFilter: `blur(${(overLight ? 16 : 8) + blurAmount * 36}px) saturate(${saturation}%)`,
+      backdropFilter: `blur(${(overLight ? 20 : 12) + blurAmount * 44}px) saturate(${saturation}%)`,
+      WebkitBackdropFilter: `blur(${(overLight ? 20 : 12) + blurAmount * 44}px) saturate(${saturation}%)`,
     }
 
     const mouseX = mouseOffset?.x || 0
@@ -246,16 +233,6 @@ const GlassContainer = forwardRef<
         onMouseDown={onMouseDown}
         onMouseUp={onMouseUp}
       >
-        <GlassFilter
-          mode={mode}
-          id={filterId}
-          displacementScale={displacementScale}
-          aberrationIntensity={aberrationIntensity}
-          width={glassSize.width}
-          height={glassSize.height}
-          shaderMapUrl={shaderMapUrl}
-        />
-
         <div
           className="glass-inner"
           style={{
@@ -268,10 +245,12 @@ const GlassContainer = forwardRef<
             padding,
             overflow: "hidden",
             transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-            backgroundColor: "transparent",
+            backgroundColor: overLight
+              ? "rgba(0, 0, 0, 0.24)"
+              : `rgba(255, 255, 255, ${0.08 + blurAmount * 0.08})`,
             boxShadow: overLight
-              ? "0px 16px 70px rgba(0, 0, 0, 0.75)"
-              : "0px 12px 40px rgba(0, 0, 0, 0.25)",
+              ? "0px 16px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1.5px rgba(255, 255, 255, 0.35), inset 0 0 16px rgba(255, 255, 255, 0.05)"
+              : "0px 14px 44px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.08)",
           }}
         >
           {/* backdrop refraction layer */}
